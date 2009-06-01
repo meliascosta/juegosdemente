@@ -5,16 +5,12 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = [
-	
-]
+ADMINS = []
 
-MANAGERS = [
-	
-]
+MANAGERS = []
 
 DATABASE_ENGINE = 'sqlite3' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'schooldb.sqlite'             # Or path to database file if using sqlite3.
+DATABASE_NAME = 'labgamesdb.sqlite'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -46,7 +42,7 @@ USE_I18N = False
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ROOT_PATH + '/simpleschool/static'
+MEDIA_ROOT = ROOT_PATH + '/static/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -57,7 +53,7 @@ MEDIA_URL = '/static/'
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/admin_media/'
-AUTH_PROFILE_MODULE = 'userpanel.profile'
+AUTH_PROFILE_MODULE = 'contributable_games.profile'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '9$i(#xl8i+i3e63v7=p#!64_^q!h1w9tc5ay)20(vo#f+&(-_i'
@@ -74,12 +70,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
 )
 
-ROOT_URLCONF = 'simpleschool.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    ROOT_PATH + '/simpleschool/templates',
-    ROOT_PATH + '/diamandas/myghtyboard/templates',
-    ROOT_PATH + '/diamandas/pages/templates',
+    ROOT_PATH + '/contributable_games/templates',
     ROOT_PATH + '/django/contrib/admin/templates',
 )
 
@@ -100,14 +94,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.contenttypes',
-    'simpleschool',
-    'diamandas.myghtyboard',
-    'diamandas.userpanel',
+    'contributable_games',
     'django.contrib.admin',
+    'django_evolution',
 )
 
 #Diamanda settings
 SITE_DOMAIN = 'http://localhost' # Domain URL used for creating full links in RSS etc.
-NOTIFY_ADMINS = False # if true add topic/post will send a email to admin
-FORUM_MAX_ANONYMOUS_POSTS_PER_HOUR = 10 # how many posts may be made by anonymous within an hour from now
-FORUM_MAX_USER_POST_PER_HOUR = 10 # how many posts may be made by every logged in user within an hour from now. 0 - no limit
