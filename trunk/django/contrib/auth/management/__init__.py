@@ -46,5 +46,5 @@ def create_superuser(app, created_models, verbosity, **kwargs):
 
 signals.post_syncdb.connect(create_permissions,
     dispatch_uid = "django.contrib.auth.management.create_permissions")
-#signals.post_syncdb.connect(create_superuser,
-#    sender=auth_app, dispatch_uid = "django.contrib.auth.management.create_superuser")
+signals.post_syncdb.connect(create_superuser,
+    sender=auth_app, dispatch_uid = "django.contrib.auth.management.create_superuser")
