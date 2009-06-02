@@ -1,1 +1,2 @@
-1 - 
+Pages: Pages to be preprocessed, accesed in the root path of the site
+Resources: Always accesible in the same url, relative to where pages are accesed.
