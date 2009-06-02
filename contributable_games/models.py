@@ -17,16 +17,30 @@ class Game(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField(upload_to = lambda s,i: "%s/main_image/" % s.static_dir)
+    image = models.ImageField(upload_to = lambda s,i: "%s/main_image/%s" % (s.static_dir,i))
     
     @property
     def static_dir(self):
         return 'games/%s' % self.name
     
-class GameResource(models.Model):
-    game = models.ForeignKey(Game)
-    file = models.FileField(upload_to = lambda s,i: "%s/resources/" % s.game.static_dir)
+    @property
+    def resource_path(self):
+        return "%s/res/" % self.static_dir
     
+    @property
+    def page_path(self):
+        return "%s/pages/" % self.static_dir
+    
+class GameResource(models.Model):
+    name = models.CharField(max_length=200)
+    game = models.ForeignKey(Game)
+    file = models.FileField(upload_to = lambda s,i: s.game.resource_path+i)
+    
+class GamePage(models.Model):
+    name = models.CharField(max_length=200)
+    game = models.ForeignKey(Game)
+    file = models.FileField(upload_to = lambda s,i: s.game.page_path+i)
+
 class SavedPlay(models.Model):
     game = models.ForeignKey(Game)
     profile = models.ForeignKey(Profile, null=True)
@@ -48,5 +62,5 @@ class GameFile(models.Model):
     game = models.ForeignKey(Game)
     nivel = models.IntegerField()
     name = models.CharField(max_length=200)
-    file = models.FileField(upload_to = lambda s,i: "%s/game_files/" % s.game.static_dir)
+    file = models.FileField(upload_to = lambda s,i: "%s/game_files/%s" % (s.game.static_dir, i))
     
