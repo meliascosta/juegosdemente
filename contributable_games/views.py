@@ -1,17 +1,18 @@
 from django.views.static import serve
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from models import Game, GamePage, GameResource, Profile
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
 import re, os
 from datetime import date, datetime
 from woozp_utils.view import AjaxView, request_response
 from django import forms
 
 def index(request):
-    return request_response(request, 'contributable_games/index.html')
+    return render_to_response('contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all()})
 
 def profile(request):
     return request_response(request, 'contributable_games/profile.html')

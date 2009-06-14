@@ -83,8 +83,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media", 
     "django.core.context_processors.request",
-    "woozp_utils.template_context_processors.common_template_variables",
-    "woozp_utils.template_context_processors.message_from_session",
+    #"woozp_utils.template_context_processors.common_template_variables",
+    #"woozp_utils.template_context_processors.message_from_session",
 )
 
 INSTALLED_APPS = (
