@@ -1,6 +1,0 @@
--Set cookie only for 'main' path.
--Prevent the creation of a 'main' game.
--Make resources and pages share the same abstract base.
--Make resources and pages automatically have the file name as their name.
-
--Make {{ game_script }}
