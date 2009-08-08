@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block javascript %}
+	{{ block.super }}
+	<script type="text/javascript">
+		$(function() {
+			$("#id_birthdate")
+				.datepicker({changeYear:true,
+							 showMonthAfterYear: true,
+							 yearRange: '1930:2009' });
+		});
+	</script>
+{% endblock %}
+
+{% block content %}
+<h2>Ingresa tus datos para registrarte</h2>
+<form class="alone" method="post" action="{% url register %}">
+	{{ form.as_p }}
+	<input class="submit" type="submit" name="Enviar" value="Enviar"/>
+</form>
+{% endblock %}

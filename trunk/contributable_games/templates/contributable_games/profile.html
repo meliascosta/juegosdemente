@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Hola {{ user.username }}</h1>
+<a href="{% url create_game %}">Crear un juego nuevo</a>
+
+{% if games %}
+	<h1>And here are your games</h1>
+	<ul>
+	{% for game in games %}
+		<li>{{ game.name }}: <a href="{% url serve_game_page game.name index %}">View</a> | <a href="{% url edit_game game.id %}">Edit</a></li>
+	{% endfor %}
+	</ul>
+{% endif %}
+{% endblock %}

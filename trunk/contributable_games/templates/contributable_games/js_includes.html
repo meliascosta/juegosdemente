@@ -1,0 +1,20 @@
+<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/JSON.js"></script>
+<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/logger.js"></script>
+<script type="text/javascript">
+	$.games = {
+		'new_play': function(){
+			var logger, play_id;
+			$.ajax({url:'{% url new_play game_name %}', async:false, dataType:'json',
+	            success:function(x){
+                     logger = new Logger('{% url log_action game_name %}', x.play_id);
+                     play_id = x.play_id;
+	            }});
+           	return logger;
+		},
+		'set_score': function(score){
+			$.ajax({url:'{% url set_score game_name %}', data:{'score':score}});
+		},
+		'username': '{% firstof user.username '~Anonimo' %}'
+	}
+</script>
