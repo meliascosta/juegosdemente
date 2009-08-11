@@ -4,20 +4,21 @@
 <h1>Los juegos juegazos</h1>
 {% for game in games%}
 <div class="game">
-<table border>
-<th colspan="2">{{game.title|upper}} <a href="{% url serve_game_index game.name %}">Ver</a></th>
-<tr>
-<td><img width="200" src="/static/{{game.image}}"></td>
-<td>
-<b>Creado por:</b> {{ game.profile.username }}
-<br>
-<b>Descripcion: </b> {{game.description}}
-<br>
-<b>Creado el: </b> {{game.created|date:"d/m/Y"}}
-</td>
-</tr>
-</table> 
-
+  <table border>
+	<th colspan="2">{{game.title|upper}}
+	   <a href="{% if user.is_authenticated %}{{ game.login_url }}{% else %}{{ game.view_game_url }}{% endif %}">Ver</a>
+  </th>
+	<tr>
+	<td><img width="200" src="/static/{{game.image}}"></td>
+	<td>
+	<b>Creado por:</b> {{ game.profile.username }}
+	<br/>
+	<b>Descripcion: </b> {{game.description}}
+	<br/>
+	<b>Creado el: </b> {{game.created|date:"d/m/Y"}}
+	</td>
+	</tr>
+	</table> 
 </div>
 {% endfor %}
 
