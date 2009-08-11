@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Un juego buenisimo</title>
+    {{ js_includes }}
+    <style type="text/css">
+    	body {
+				height: 599px;
+    	}
+	    h1{
+	        font-family: Arial;
+	        font-size:40px;
+	        text-align:center;          
+	    }
+			li {
+				border:5px solid;
+				display:inline;
+				list-style-image: none;
+				list-style-position: outside;
+				list-style-type: none;
+				margin:15px;
+				padding:15px;
+				cursor: pointer;
+			}
+			ul {
+				text-align: center;
+				margin: 0;
+				padding: 0;
+			}
+			li.varon {
+				border-color: #00f;
+			}
+			li.mujer {
+				border-color: #FF009B;
+			}
+			#score {
+				border: grey 10px dashed;
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				padding: 10px;
+				font-weight: bold;
+				font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+			}
+    </style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			function choose(lista){
+				return lista[Math.floor(Math.random()*(lista.length))];
+			}
+      $(function(){
+				var $items = $("li");
+				var opts = $.map($("li"), function(n,i){ return n.id } );
+				var $score = $("#score");
+				var score = 0;
+				var choice;
+				var logger = $.games.new_play()
+				logger.log("GAME_STARTED", {});
+				
+				function set_choice(){
+					choice = choose(opts);
+          $('#current').html(choice);
+				}
+
+				function update_score(){
+					$score.find("span").html(score)
+				}
+				
+				function on_click(){
+					//accion principal del juego, estaria bueno separla en partes.
+					logger.log("NAME_SELECTED", {choice:this.id});
+					score += (choice == this.id) ? 1 : -1 ;
+					update_score();
+					set_choice();
+				}
+				
+				$items.click(on_click);
+				set_choice();
+			});
+    </script>
+		<div class="--hide-when-authenticated">
+			Hola <span class="--username">Username</span> quer&eacute;s conectarte para guardar tus puntajes?
+		  <a class="--click-to-login" href="#">hac&eacute; click ac&aacute;</a>
+		</div>
+		<div class="--hide-when-anonymous">
+			Hola <span class="--username">Username</span>
+			<a class="--click-to-logout" href="#">[salir]</a>
+		</div>
+
+    <h1 class="varon">Este es un juego buenisimo!</h1>
+    <ul>
+      <li id="martin" class="varon">Mart&iacute;n</li>
+      <li id="laura" class="mujer">Laura</li>
+      <li id="nubis" class="varon">Nubis</li>
+			<li id="marta" class="mujer">Marta</li>
+    </ul>
+		<div id="score">Score: <span>0</span></div>
+		<div id="current"></div>
+	</body>
+</html>

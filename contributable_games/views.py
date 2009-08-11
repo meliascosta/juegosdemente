@@ -11,6 +11,7 @@ from datetime import date, datetime
 from woozp_utils.view import AjaxView, request_response
 from django import forms
 from django.contrib import admin
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY
 
 def index(request):
     return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all()})
@@ -19,7 +20,6 @@ def index(request):
 def profile(request):
     return request_response(request, 'contributable_games/profile.html',
                             {'games': request.user.profile.game_set.all()})
-
 class Register(AjaxView):
     HTML = 'contributable_games/register.html'
     
@@ -40,7 +40,6 @@ class Register(AjaxView):
             self.instance.set_password(self.cleaned_data['password'])
             self.instance.save()
             return ret
-    
     
     def on_get_call(self, request):
         return request_response(request, self.HTML, {'form': self.Form()})
@@ -77,7 +76,7 @@ class CreateGame(UserModelAdmin):
     def add_view(self, request, form_url='', extra_context=None):
         extra_context = extra_context or {}
         extra_context['title'] = 'Creando un nuevo juego'
-        return super(CreateGame, self).change_view(request, form_url, extra_context)
+        return super(CreateGame, self).add_view(request, form_url, extra_context)
     
     def save_model(self, request, obj, form, change):
         obj.profile = request.user.profile
@@ -114,3 +113,16 @@ class EditGame(UserModelAdmin):
         return super(EditGame, self).change_view(request, object_id, extra_context)
 
 edit_game = login_required(EditGame(Game, users_admin).change_view)
+
+@login_required
+def login_to_game(request, game_name):
+    engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
+    game_session = engine.SessionStore(None)
+    for x in SESSION_KEY, BACKEND_SESSION_KEY:
+        game_session[x] = request.session[x]
+    game_session.save()
+    url = '%s%s?%s=%s' % (settings.GAMES_SITE_DOMAIN,
+                          reverse('serve_game_index', args=[game_name], urlconf="urls_games_site"),
+                          settings.LOGIN_KEY_NAME,
+                          game_session.session_key)
+    return HttpResponseRedirect(url)

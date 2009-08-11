@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.simplejson import dumps, loads
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 class BigIntegerField(models.IntegerField):
     def db_type(self):
@@ -31,6 +33,18 @@ class Game(models.Model):
     def page_path(self):
         return "%s/pages/" % self.static_dir
     
+    def __unicode__(self):
+        return self.title
+    
+    @property
+    def view_game_url(self):
+        return settings.GAMES_SITE_DOMAIN +\
+                reverse('serve_game_index', args=[self.name], urlconf="urls_games_site")
+                
+    @property
+    def login_url(self):
+        return settings.MAIN_SITE_DOMAIN + \
+                reverse('login_to_game', args=[self.name], urlconf="urls_main_site")
     
 class _GameRes(models.Model):
     class Meta:

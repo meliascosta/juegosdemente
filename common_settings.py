@@ -20,7 +20,6 @@ EMAIL_HOST = 'localhost'
 EMAIL_HOST_PASSWORD = ''
 EMAIL_HOST_USER = ''
 EMAIL_PORT = 25
-EMAIL_SUBJECT_PREFIX = "[school site message]"
 EMAIL_USE_TLS = False
 
 # Local time zone for this installation. Choices can be found here:
@@ -63,46 +62,6 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
 )
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.doc.XViewMiddleware',
-)
-
-ROOT_URLCONF = 'urls'
-
-TEMPLATE_DIRS = (
-    ROOT_PATH + '/contributable_games/templates',
-    ROOT_PATH + '/django/contrib/admin/templates',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media", 
-    "django.core.context_processors.request",
-    "woozp_utils.template_context_processors.common_template_variables",
-    "woozp_utils.template_context_processors.message_from_session",
-)
-
-INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.contenttypes',
-    'contributable_games',
-    'django.contrib.admin',
-    'django_evolution',
-)
-
-#Diamanda settings
-SITE_DOMAIN = 'http://localhost' # Domain URL used for creating full links in RSS etc.
-
-SESSION_COOKIE_PATH = '/main'
-LOGIN_REDIRECT_URL = '/main/accounts/profile/'
-LOGIN_URL = '/main/accounts/login/'
-LOGOUT_URL = '/main/accounts/logout/'
+MAIN_SITE_DOMAIN = 'http://localhost:8080'
+GAMES_SITE_DOMAIN = 'http://localhost:8081'
+LOGIN_KEY_NAME = 'login_key'
