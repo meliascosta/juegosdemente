@@ -1,0 +1,230 @@
+<html>
+<head>
+<title>Planning test</title>
+<link rel="stylesheet" type="text/css" href="res/style.css" />
+<style type="text/css">
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+#game-container{
+	position:absolute;
+	left: 200px;
+}
+
+.box {
+	position: absolute;
+	border: 3px dashed;
+}
+
+.drop {
+	width: 150px;
+	height: 150px;
+	
+}
+
+.drag {
+	width: 50px;
+	height: 50px;
+	margin: 46px;
+	cursor: pointer;
+}
+
+#drop-1 {
+	left: 20px;
+	top: 20px;
+	background-color: #FF4444;
+}
+
+#drop-2 {
+	left: 300px;
+	top: 20px;
+	background-color: #44FF44;
+}
+
+#drop-3 {
+	left: 20px;
+	top: 300px;
+	background-color: #4444FF;
+}
+
+#drop-4 {
+	left: 300px;
+	top: 300px;
+	background-color: #AAAAAA;
+}
+
+.drop-active{
+	border: white dashed;
+}
+.drop-hover{
+	border: white solid;
+}
+
+#drag-1 {
+	background-color: red;
+}
+#drag-2 {
+	background-color: green;
+}
+#drag-3 {
+	background-color: blue;
+}
+</style>
+{{ js_includes }}
+<script type="text/javascript">
+	$(function(){		
+		//a stage whitelist with a full duplex diagonal
+		var full_duplex_diag = {'drop-1':['drop-2','drop-3','drop-4'],
+								'drop-2':['drop-1','drop-4'],
+								'drop-3':['drop-1','drop-4'],
+								'drop-4':['drop-1','drop-2','drop-3']}
+		var half_duplex_diag = {'drop-1':['drop-2','drop-3'],
+								'drop-2':['drop-1','drop-4'],
+								'drop-3':['drop-1','drop-4'],
+								'drop-4':['drop-1','drop-2','drop-3']}
+		
+		var desired_stage = [['drag-1','drop-1'],['drag-2','drop-2'],['drag-3','drop-3']]
+		var stages = [{'origins_whitelist': full_duplex_diag,
+					   'initial_stage': [['drag-1','drop-2'],['drag-2','drop-3'],['drag-3','drop-4']],
+					   'good_moves': 5,
+					   'loose_moves': 8},
+					  {'origins_whitelist': half_duplex_diag,
+					   'initial_stage': [['drag-1','drop-1'],['drag-2','drop-3'],['drag-3','drop-2']],
+					   'good_moves': 5,
+					   'loose_moves': 8}]
+		var desired_stage = [['drag-1','drop-1'],['drag-2','drop-2'],['drag-3','drop-3']]
+		
+		var current_moves //Moves made in the current stage
+		var current_stage = 0
+		function get_stage(){
+			//get current stage entry
+			return stages[current_stage]
+		}
+		
+		function setup_stage(stage){
+			$.each(stage.initial_stage, function(k,i){ 
+				$('#'+i[1]).append($('#'+i[0])) 
+			})
+			current_moves = 0
+		}		
+		function next_stage(){
+			current_stage++
+			if(current_stage == stages.length){
+				alert('Completaste todos los niveles, vamos a empezar otra vez')
+				current_stage = 0
+			}else{
+				alert('A ver como te va en el proximo...')
+			}
+			setup_stage(get_stage())	
+		}
+		
+		function win(){
+			if(current_moves <= get_stage().good_moves){
+				alert('Ganaste en '+current_moves+' movidas!! sos bueno!! ')
+			}else{
+				alert('Ganaste en '+current_moves+' movidas, trata de ganar en '+get_stage().good_moves)
+			}
+			next_stage()
+		}
+		
+		function loose(){
+			alert('Perdiste, probemos otra vez el mismo nivel')
+			setup_stage(get_stage())
+		}
+
+		function accept_item_predicate(draggable){
+			/* Only accept if I'm empty and dragger's origin is in whitelist */
+			var $this = $(this)
+			if($('.drag', $this).length){//I already have a .drag inside.
+				return false;
+			}
+			var origin = $(draggable).parent().attr('id')
+			var whitelist = get_stage().origins_whitelist[$this.attr('id')]
+			for(i in whitelist){
+				if(origin == whitelist[i]){
+					return true
+				}
+			}
+			return false
+		}
+		
+		function on_drop(ev, ui){
+			current_moves++
+			$(ui.element).append( $(ui.draggable).css('left',0).css('top',0) ) //move the player
+			var won = true
+			for(i in desired_stage){ // Check if the desired stage was reached
+				if($('#'+desired_stage[i][1]).find('#'+desired_stage[i][0]).length == 0){
+					won = false
+					break
+				}
+			}
+			if(won){
+				//User won, set some time aside for repaints before telling him.
+				setTimeout(win, 500)
+			}
+			if(current_moves == get_stage().loose_moves){
+				//User lost, set some time aside for repaints before telling him.
+				setTimeout(loose, 500)
+			}
+		}
+		
+		function new_game(){
+			//Start draggables
+			$('.drag').draggable({
+				helper: 'clone',
+				zIndex: 1000,
+				start: function(){ $(this).hide() },
+				stop: function(){ $(this).show() },
+			})
+			
+			//Start droppables
+			$('.drop')
+				.droppable({
+					accept: accept_item_predicate,
+					activeClass: 'drop-active',
+					hoverClass: 'drop-hover',
+					drop: on_drop,
+					tolerance: 'touch'
+				})
+				
+			setup_stage(get_stage())
+		}
+		function game_main(){
+			$('#game-container').hide()
+			$('.start')
+				.click(function(){
+					$('.welcome').hide()
+					$('#game-container').show()
+					new_game()
+				})
+		}
+		game_main()
+	})
+</script>
+</head>
+<body>
+<a class="back" href="index.html">
+	&lt;&lt; volver
+</a>
+<div class="welcome">
+	<h2>El juego de la estrategia</h2>
+	<p>
+		Aca tenes que poner cada cuadradito en su casillero correspondiente, 
+		son 2 niveles, en el primero se puede usar la diagonal izquierda-arriba <-> derecha-abajo
+		en el segundo nivel la diagonal solo sirve en un sentido izquierda-arriba -> derecha-abajo
+	</p>
+	<span class="start"> Empezar </span>
+</div>
+<div class="game-container" id="game-container">
+	<div id="drop-1" class="box drop"></div>
+	<div id="drop-2" class="box drop"></div>
+	<div id="drop-3" class="box drop"></div>
+	<div id="drop-4" class="box drop"></div>
+	<div id="drag-1" class="box drag"></div>
+	<div id="drag-2" class="box drag"></div>
+	<div id="drag-3" class="box drag"></div> 
+</div>
+</body>
+</html>

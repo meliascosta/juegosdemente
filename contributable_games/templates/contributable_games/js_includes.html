@@ -1,4 +1,5 @@
-<script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/jquery-1.2.3.min.js"></script>
+<script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/jquery-ui.js"></script>
 <script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/JSON.js"></script>
 <script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/logger.js"></script>
 <script type="text/javascript">
@@ -19,6 +20,16 @@
 		'is_authenticated': {% if user.is_authenticated %}true{% else %}false{% endif %}
 	}
 	$(function(){
+		$("div.--content-login-header")
+		  .append('<div class="--hide-when-authenticated">'+
+              'Hola <span class="--username">Username</span> quer&eacute;s conectarte para guardar tus puntajes?'+
+              '<a class="--click-to-login" href="#">hac&eacute; click ac&aacute;</a>'+
+						  '</div>'+
+					    '<div class="--hide-when-anonymous">'+
+					    'Hola <span class="--username">Username</span>'+
+					    '<a class="--click-to-logout" href="#">[salir]</a>'+
+					    '</div>');
+		
     if($.games.is_authenticated){
       $(".--hide-when-authenticated").remove();
     }else{

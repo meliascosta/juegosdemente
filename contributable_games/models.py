@@ -33,6 +33,10 @@ class Game(models.Model):
     def page_path(self):
         return "%s/pages/" % self.static_dir
     
+    @property
+    def game_file_path(self):
+        return "%s/game_files/" % self.static_dir
+    
     def __unicode__(self):
         return self.title
     
@@ -84,9 +88,7 @@ class LogEntry(models.Model):
         self._data = dumps(data) 
     data = property(_get_data, _set_data)
     
-class GameFile(models.Model):
-    game = models.ForeignKey(Game)
+class GameFile(_GameRes):
     nivel = models.IntegerField()
-    name = models.CharField(max_length=200)
     file = models.FileField(upload_to = lambda s,i: "%s/game_files/%s" % (s.game.static_dir, i))
     
