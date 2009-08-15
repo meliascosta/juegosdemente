@@ -67,7 +67,6 @@ def set_score(request, game_name):
 
 def _serve_game_path(request, cls, directory, filename):
     get_object_or_404(GameResource, game=request.game, file=directory+filename)
-    print "jojojojo", settings.MEDIA_ROOT+directory+filename
     return serve(request, filename, document_root=settings.MEDIA_ROOT+directory)
 
 def serve_game_resource(request, game_name, resource_path):
