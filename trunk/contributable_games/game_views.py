@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from models import Game, GamePage, GameResource, SavedPlay, LogEntry
+from models import Game, GamePage, GameResource, SavedPlay, LogEntry, GameFile
 from django.contrib.auth.views import logout
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, HttpResponseNotFound
 from woozp_utils.view import json_to_response
@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.utils import simplejson
 from woozp_utils.json import json_encode
 from cStringIO import StringIO
+from django.views.static import serve
 
 def game_login(request, game_name):
     '''
@@ -21,11 +22,6 @@ def game_login(request, game_name):
 def game_logout(request, game_name):
     logout(request, reverse('serve_game_index', args=[game_name]))
     return HttpResponseRedirect(settings.MAIN_SITE_DOMAIN + reverse('logout', urlconf="urls_main_site"))
-
-def serve_game_resource(request, game_name, resource_path):
-    game = get_object_or_404(Game, name=game_name)
-    res = get_object_or_404(GameResource, game=game, file=game.resource_path+resource_path)
-    return serve(request, resource_path, document_root=settings.MEDIA_ROOT+game.resource_path)
 
 def serve_game_page(request, game_name, page_path):
     try:
@@ -68,3 +64,14 @@ def set_score(request, game_name):
     play.score = request.POST['score']
     play.save()
     return json_to_response({'status':200})
+
+def _serve_game_path(request, cls, directory, filename):
+    get_object_or_404(GameResource, game=request.game, file=directory+filename)
+    print "jojojojo", settings.MEDIA_ROOT+directory+filename
+    return serve(request, filename, document_root=settings.MEDIA_ROOT+directory)
+
+def serve_game_resource(request, game_name, resource_path):
+    return _serve_game_path(request, GameResource, request.game.resource_path, resource_path)
+
+def serve_game_file(request, game_name, game_file_path):
+    return _serve_game_path(request, GameFile, request.game.game_file_path, game_file_path)

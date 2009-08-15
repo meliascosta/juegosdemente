@@ -1,0 +1,13 @@
+{ 
+  level: 10,
+  trials: {
+    {name: 'martin'},
+    {name: 'nubis'},
+    {name: 'marta'},
+    {name: 'laura'},
+    {name: 'martin'},
+    {name: 'marta'},
+    {name: 'nubis'},
+    {name: 'laura'},
+  }
+}

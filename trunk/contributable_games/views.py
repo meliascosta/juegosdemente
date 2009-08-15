@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from models import Game, GamePage, GameResource, Profile
+from models import Game, GamePage, GameResource, Profile, GameFile
 from django.shortcuts import get_object_or_404, render_to_response
 from datetime import date, datetime
 from woozp_utils.view import AjaxView, request_response
@@ -89,12 +89,17 @@ class GameResourceInline(admin.StackedInline):
     
 class GamePageInline(admin.StackedInline):
     model = GamePage
-    extra = 5
+    extra = 2
+    
+class GameFileInline(admin.StackedInline):
+    model = GameFile
+    extra = 2
+    fields = (('nivel','file'),)
     
 class EditGame(UserModelAdmin):
     fields = ('title', 'description', 'image',)
     change_form_template = 'contributable_games/change_object.html'
-    inlines = [GamePageInline,GameResourceInline,]   
+    inlines = [GamePageInline,GameResourceInline,GameFileInline]   
     
     def response_change(self, request, obj):
         super(EditGame, self).response_change(request, obj)
