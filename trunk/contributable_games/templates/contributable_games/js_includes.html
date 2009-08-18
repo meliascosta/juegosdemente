@@ -17,8 +17,24 @@
 			$.ajax({url:'{% url set_score game.name %}', data:{'score':score}});
 		},
 		'username': "{% firstof user.username '~Anonimo' %}",
-		'is_authenticated': {% if user.is_authenticated %}true{% else %}false{% endif %}
+		'is_authenticated': {% if user.is_authenticated %}true{% else %}false{% endif %},
+		'gamefile_list': [{% for f in game_files %}'{{ f }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+		'get_gamefile': function(gamefile_name){
+			var ret;
+			$.ajax({
+			  type: "GET",
+			  url: 'game_file/'+gamefile_name,
+			  dataType: "json",
+				async: false,
+				success: function(json){
+					ret = json;
+				}
+			});
+	    return ret;
+		}
 	}
+	
+	
 	$(function(){
 		$("div.--content-login-header")
 		  .append('<div class="--hide-when-authenticated">'+
