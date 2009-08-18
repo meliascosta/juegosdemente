@@ -10,6 +10,7 @@ from django.utils import simplejson
 from woozp_utils.json import json_encode
 from cStringIO import StringIO
 from django.views.static import serve
+from os import path
 
 def game_login(request, game_name):
     '''
@@ -29,10 +30,13 @@ def serve_game_page(request, game_name, page_path):
     except:
         return HttpResponseNotFound("This game doesn't have a %s page" % page_path)
     
+    game_files = [path.basename(x.file.name) for x in request.game.gamefile_set.all()]
+    
     js_includes = render_to_string('contributable_games/js_includes.html', {
         'SETTINGS':settings,
         'game':request.game,
         'user':request.user,
+        'game_files': game_files,
         'logout_url': reverse('game_logout', args=[game_name]),
         'login_url': request.game.login_url,
     })
@@ -66,7 +70,7 @@ def set_score(request, game_name):
     return json_to_response({'status':200})
 
 def _serve_game_path(request, cls, directory, filename):
-    get_object_or_404(GameResource, game=request.game, file=directory+filename)
+    get_object_or_404(cls, game=request.game, file=directory+filename)
     return serve(request, filename, document_root=settings.MEDIA_ROOT+directory)
 
 def serve_game_resource(request, game_name, resource_path):

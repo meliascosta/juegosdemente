@@ -94,6 +94,20 @@ body {
 					   'initial_stage': [['drag-1','drop-1'],['drag-2','drop-3'],['drag-3','drop-2']],
 					   'good_moves': 5,
 					   'loose_moves': 8}]
+						 
+	   [{'origins_whitelist': {'drop-1':['drop-2','drop-3','drop-4'],
+                'drop-2':['drop-1','drop-4'],
+                'drop-3':['drop-1','drop-4'],
+                'drop-4':['drop-1','drop-2','drop-3']},
+       'initial_stage': [['drag-1','drop-2'],['drag-2','drop-3'],['drag-3','drop-4']],
+       'good_moves': 5,
+       'loose_moves': 8},
+            {'origins_whitelist': half_duplex_diag,
+             'initial_stage': [['drag-1','drop-1'],['drag-2','drop-3'],['drag-3','drop-2']],
+             'good_moves': 5,
+             'loose_moves': 8}]				 
+						 
+						 
 		var desired_stage = [['drag-1','drop-1'],['drag-2','drop-2'],['drag-3','drop-3']]
 		
 		var current_moves //Moves made in the current stage
