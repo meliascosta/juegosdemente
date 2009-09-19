@@ -78,7 +78,7 @@
 				
 				function on_click(){
 					//accion principal del juego, estaria bueno separla en partes.
-					logger.log("NAME_SELECTED", {choice:this.id});
+					logger.log("NAME_SELECTED", {choice:this.id,gano:0});
 					score += (choice == this.id) ? 1 : -1 ;
 					update_score();
 					set_choice();

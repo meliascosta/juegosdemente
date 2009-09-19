@@ -11,6 +11,8 @@ from woozp_utils.json import json_encode
 from cStringIO import StringIO
 from django.views.static import serve
 from os import path
+from django.utils.encoding import force_unicode
+
 
 def game_login(request, game_name):
     '''
@@ -40,8 +42,7 @@ def serve_game_page(request, game_name, page_path):
         'logout_url': reverse('game_logout', args=[game_name]),
         'login_url': request.game.login_url,
     })
-    
-    return HttpResponse(page.file.read().replace('{{ js_includes }}', js_includes))
+    return HttpResponse(force_unicode(page.file.read()).replace('{{ js_includes }}', js_includes))
 
 def new_play(request, game_name):
     profile = request.user.profile if request.user.is_authenticated() else None
