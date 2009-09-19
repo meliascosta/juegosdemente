@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+     "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Juego de las monedas </title>
+    {{ js_includes }}
+    <style type="text/css">
+        body     {background-color: grey;
+            text-align: center;
+        }
+
+        button.opciones {background-color: red;
+                text-align: center;            
+        }
+    </style>
+    <script type="text/javascript">
+    var cant_monedas = 18,
+		$cantidad_monedas = $("#cantidad_monedas"),
+    	cant_saca_compu=0,
+    	$jugada_compu = $("#jugada_compu"),
+		logger = null;
+	
+
+    //falta arreglar el tema de no tener Habilitados todos los botones cuando quedan menos de 3 monedas//
+    // y que quede lindo el tema de ganaste y perdiste, no q te salte a otra pantalla, sino q te salte una ventanita //
+    
+    function actualiza_jugada(){
+        cant_monedas=cant_monedas-parseInt(cant_saca_compu);
+        if (cant_monedas > 0){
+            $("#cantidad_monedas > span").text(cant_monedas);
+            $("button").fadeIn();
+            $("#pregunta").fadeIn();
+            $("#jugada_compu").fadeOut();
+            if(cant_monedas <= 2){
+                $("#3").hide();
+            }
+            if(cant_monedas <= 1){
+                $("#2").hide();
+            }
+        }else{
+            alert("Perdiste! :(");
+            document.location.reload();
+        };
+    };
+
+    function jugada(){
+        logger.log("HUMAN_SELECTED", {choice_human:this.id});
+        var cant_sacada= $(this).attr("id");
+        cant_monedas=cant_monedas-parseInt(cant_sacada);
+        if (cant_monedas > 0){
+            $("#cantidad_monedas > span").text(cant_monedas);
+            $("button").fadeOut();
+            $("#pregunta").fadeOut();
+                if (cant_monedas > 3){
+                    cant_saca_compu= Math.floor(Math.random()*3)+1;
+                    logger.log("COMPU_SELECTED", {choice_compu:cant_saca_compu});
+                }else{
+                    cant_saca_compu = cant_monedas;
+                };
+            $("#jugada_compu > span").text(cant_saca_compu);
+            $("#jugada_compu").fadeIn();
+            setTimeout(actualiza_jugada, 3000);
+        }else{
+            alert("Ganaste :)");
+            document.location.reload();
+        };
+    };
+	
+    $(function(){
+        $('button').click(jugada);
+        $("#cantidad_monedas > span").text(cant_monedas);
+        $("#jugada_compu").hide();
+		logger = $.games.new_play();
+        logger.log("GAME_STARTED", {});
+    });
+
+    </script>
+    </head>
+    <body>
+        <div id="cantidad_monedas">Hay <span></span> monedas.</div>
+        <div id="pregunta">¿Cu&aacute;ntas quer&eacute;s sacar?</div>
+        <div id="cuadro_opciones">
+            <button class="opciones" id="1">1 moneda</button>
+            <button class="opciones" id="2">2 monedas</button>
+            <button class="opciones" id="3">3 monedas</button>
+        </div>
+        <div id="jugada_compu" > La compu saca <span> </span> monedas </div>
+    
+    </body>
+</html>
