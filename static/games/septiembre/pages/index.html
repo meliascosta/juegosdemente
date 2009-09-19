@@ -56,19 +56,11 @@
 				var $score = $("#score");
 				var score = 0;
 				var choice;
-				var gamefile = $.games.get_gamefile("un_game_file");
-				var trial_index = 0;
 				var logger = $.games.new_play()
 				logger.log("GAME_STARTED", {});
 				
-				/* Moverse al proximo trial o terminar el juego si no hay mas*/
 				function set_choice(){
-					if(trial_index == gamefile.trials.length){
-						alert("Terminamos con el gamefile");
-						return;
-					}
-					choice = gamefile.trials[trial_index];
-					trial_index++;
+					choice = choose(opts);
           $('#current').html(choice);
 				}
 
