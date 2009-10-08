@@ -5,13 +5,16 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from models import Game, GamePage, GameResource, Profile, GameFile
+from models import Game, Profile
 from django.shortcuts import get_object_or_404, render_to_response
 from datetime import date, datetime
 from woozp_utils.view import AjaxView, request_response
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY
+import zipfile
+from unzip import unzip
+import tempfile
 
 def index(request):
     return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all()})
@@ -61,9 +64,9 @@ users_admin = admin.AdminSite('users_admin')
 class UserModelAdmin(admin.ModelAdmin):
     def message_user(self, request, message):
         request.session['ok_message'] = message
-
+        
 class CreateGame(UserModelAdmin):
-    fields = ('name', 'title', 'description', 'image',)
+    fields = ('name', 'title', 'description',)
     change_form_template = 'contributable_games/change_object.html'
     
     def has_add_permission(self, request):
@@ -81,32 +84,32 @@ class CreateGame(UserModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.profile = request.user.profile
         obj.save()
+        obj.create_directory_structure()
 create_game = login_required(CreateGame(Game, users_admin).add_view)
-
-class GameResourceInline(admin.StackedInline):
-    model = GameResource
-    extra = 5
-    
-class GamePageInline(admin.StackedInline):
-    model = GamePage
-    extra = 2
-    
-class GameFileInline(admin.StackedInline):
-    model = GameFile
-    extra = 2
-    fields = (('nivel','file'),)
     
 class EditGame(UserModelAdmin):
-    fields = ('title', 'description', 'image',)
-    change_form_template = 'contributable_games/change_object.html'
-    inlines = [GamePageInline,GameResourceInline,GameFileInline]   
+    class form(forms.ModelForm):
+        class Meta:
+            model = Game
+            fields = ('title', 'description', 'zip_file')
+        zip_file = forms.FileField()
+        
+        def clean_zip_file(self):
+            zf = zipfile.ZipFile(self.cleaned_data['zip_file'], 'r')
+            for name in zf.namelist():
+                if '../' in name or name.startswith('/'):
+                    raise ValidationError("El archivo zip referencia directorios no accesibles")
+                
+            return zf
+    
+    change_form_template = 'contributable_games/edit_game.html'
     
     def response_change(self, request, obj):
         super(EditGame, self).response_change(request, obj)
         return HttpResponseRedirect('.')
     
     def has_change_permission(self, request, obj):
-        return True
+        return request.user.id == obj.profile.id
 
     def change_view(self, request, object_id, extra_context=None):
         extra_context = extra_context or {}
@@ -115,9 +118,23 @@ class EditGame(UserModelAdmin):
             extra_context['title'] = 'Editando Juego %s' % obj.title
         except Game.DoesNotExist:
             pass #this is also raised and handled inside super's change_view
+        extra_context['game'] = obj
         return super(EditGame, self).change_view(request, object_id, extra_context)
+    
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        unzip(form.cleaned_data['zip_file'], obj.abspath)
 
 edit_game = login_required(EditGame(Game, users_admin).change_view)
+
+def export_game(request, object_id):
+    import os
+    game = get_object_or_404(Game, pk=object_id)
+    zf = zipfile.ZipFile(tempfile.mktemp('_export.zip', '%s_' % game.name), 'w')
+    for f in game.files:
+        zf.write(str(os.path.join(game.abspath,f)),str(f))
+    zf.close()
+    return serve(request, zf.filename, document_root='/')
 
 @login_required
 def login_to_game(request, game_name):
