@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from models import Game, GamePage, GameResource, SavedPlay, LogEntry, GameFile
+from models import Game, SavedPlay, LogEntry
 from django.contrib.auth.views import logout
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, HttpResponseNotFound
 from woozp_utils.view import json_to_response
@@ -70,12 +70,13 @@ def set_score(request, game_name):
     play.save()
     return json_to_response({'status':200})
 
-def _serve_game_path(request, cls, directory, filename):
-    get_object_or_404(cls, game=request.game, file=directory+filename)
+def _serve_game_path(request, directory, filename):
+    if not path.exists(settings.MEDIA_ROOT+directory+filename):
+        raise Http404("File Not Found")
     return serve(request, filename, document_root=settings.MEDIA_ROOT+directory)
 
 def serve_game_resource(request, game_name, resource_path):
-    return _serve_game_path(request, GameResource, request.game.resource_path, resource_path)
+    return _serve_game_path(request, request.game.resource_path, resource_path)
 
 def serve_game_file(request, game_name, game_file_path):
-    return _serve_game_path(request, GameFile, request.game.game_file_path, game_file_path)
+    return _serve_game_path(request, request.game.game_file_path, game_file_path)

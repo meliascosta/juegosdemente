@@ -1,0 +1,12 @@
+{% extends "contributable_games/change_object.html" %}
+
+{% block after_field_sets %}{% endblock %}
+
+{% block after_related_objects %}
+  {% if game.files %}
+	  <h3>Archivos de este juego <a href="{% url export_game game.id %}">(exportar)</a></h3>
+		{% for f in game.files %}
+		 <li>{{ f }}</li>
+		{% endfor %}
+  {% endif %}
+{% endblock %}

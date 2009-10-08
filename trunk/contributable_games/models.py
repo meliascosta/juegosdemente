@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.utils.simplejson import dumps, loads
 from django.core.urlresolvers import reverse
 from django.conf import settings
+import os
+from os import path
 
 class BigIntegerField(models.IntegerField):
     def db_type(self):
@@ -19,24 +21,27 @@ class Game(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField(upload_to = lambda s,i: "%s/main_image/%s" % (s.static_dir,i))
     
     @property
     def static_dir(self):
         return 'games/%s' % self.name
+    @property
+    def abspath(self):
+        return path.join(settings.MEDIA_ROOT, self.static_dir)
     
     @property
     def resource_path(self):
         return "%s/res/" % self.static_dir
-    
     @property
     def page_path(self):
         return "%s/pages/" % self.static_dir
-    
     @property
     def game_file_path(self):
         return "%s/game_files/" % self.static_dir
-    
+    @property
+    def screenshots_path(self):
+        return "%s/screenshots/" % self.static_dir
+
     def __unicode__(self):
         return self.title
     
@@ -50,24 +55,31 @@ class Game(models.Model):
         return settings.MAIN_SITE_DOMAIN + \
                 reverse('login_to_game', args=[self.name], urlconf="urls_main_site")
     
-class _GameRes(models.Model):
-    class Meta:
-        abstract = True
-
-    game = models.ForeignKey(Game)
+    def _flatten_walk(self, subdir, include_dirs = False):
+        '''Returns a flat list of file paths for all files in the given subdir, all relative to subdir'''
+        paths = []
+        for dirpath, dirnames, filenames in os.walk(path.join(settings.MEDIA_ROOT, subdir)):
+            if '/.' in dirpath: continue
+            curdir = dirpath[len(self.abspath)+1:]
+            if include_dirs:
+                paths.append(curdir)
+            paths += [path.join(curdir,f) for f in filenames if not f.startswith('.')]
+        return paths
     
-    def delete(self):
-        self.file.delete()
-        return super(_GameRes, self).delete()
+    @property
+    def files(self):
+        '''All files related to this game'''
+        return self._flatten_walk(self.static_dir)
+        
+    @property
+    def game_files(self):
+        '''All game_files related to this game'''
+        return self._flatten_walk(self.game_file_path)
     
-    def __unicode__(self):
-        return unicode(self.file.name)
-    
-class GameResource(_GameRes):
-    file = models.FileField(upload_to = lambda s,i: s.game.resource_path+i)
-    
-class GamePage(_GameRes):
-    file = models.FileField(upload_to = lambda s,i: s.game.page_path+i)
+    def create_directory_structure(self):
+        for dirname in self.resource_path, self.page_path, self.game_file_path, self.screenshots_path:
+            d = os.path.join(settings.MEDIA_ROOT, dirname)
+            if not os.path.exists(d): os.makedirs(d)
 
 class SavedPlay(models.Model):
     game = models.ForeignKey(Game)
@@ -87,8 +99,4 @@ class LogEntry(models.Model):
     def _set_data(self, data):
         self._data = dumps(data) 
     data = property(_get_data, _set_data)
-    
-class GameFile(_GameRes):
-    nivel = models.IntegerField()
-    file = models.FileField(upload_to = lambda s,i: "%s/game_files/%s" % (s.game.static_dir, i))
     

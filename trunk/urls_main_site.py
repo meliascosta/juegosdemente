@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     url(r'^accounts/profile/$', profile, name='profile'),
     url(r'^create_game/$', create_game, name='create_game'),
     url(r'^edit_game/(?P<object_id>.*)/$', edit_game, name='edit_game'),
+    url(r'^export_game/(?P<object_id>.*)/$', export_game, name='export_game'),
     url(r'^$', index, name='index'),        
 )
