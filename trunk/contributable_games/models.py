@@ -36,11 +36,17 @@ class Game(models.Model):
     def page_path(self):
         return "%s/pages/" % self.static_dir
     @property
+    def abs_pages_path(self):
+        return path.join(settings.MEDIA_ROOT, self.page_path)
+    @property
     def game_file_path(self):
         return "%s/game_files/" % self.static_dir
     @property
     def screenshots_path(self):
         return "%s/screenshots/" % self.static_dir
+    @property
+    def abs_screenshots_path(self):
+        return path.join(settings.MEDIA_ROOT, self.screenshots_path)
 
     def __unicode__(self):
         return self.title
@@ -61,7 +67,7 @@ class Game(models.Model):
         for dirpath, dirnames, filenames in os.walk(path.join(settings.MEDIA_ROOT, subdir)):
             if '/.' in dirpath: continue
             curdir = dirpath[len(self.abspath)+1:]
-            if include_dirs:
+            if include_dirs and curdir:
                 paths.append(curdir)
             paths += [path.join(curdir,f) for f in filenames if not f.startswith('.')]
         return paths
@@ -70,11 +76,27 @@ class Game(models.Model):
     def files(self):
         '''All files related to this game'''
         return self._flatten_walk(self.static_dir)
+    
+    @property
+    def files_and_dirs(self):
+        return self._flatten_walk(self.static_dir, True)
         
     @property
     def game_files(self):
         '''All game_files related to this game'''
         return self._flatten_walk(self.game_file_path)
+    
+    @property
+    def image_url(self):
+        try:
+            screenshots = [x for x in os.listdir(self.abs_screenshots_path)
+                                if x[-4:].lower() in ('.png', '.gif','.jpg')]
+        except OSError:
+            return ''
+        
+        if screenshots:
+            return path.join(settings.MEDIA_URL, self.screenshots_path, screenshots[0])
+        return ''
     
     def create_directory_structure(self):
         for dirname in self.resource_path, self.page_path, self.game_file_path, self.screenshots_path:

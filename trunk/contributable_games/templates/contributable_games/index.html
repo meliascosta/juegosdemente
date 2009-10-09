@@ -9,7 +9,7 @@
 	   <a href="{% if user.is_authenticated %}{{ game.login_url }}{% else %}{{ game.view_game_url }}{% endif %}">Ver</a>
   </th>
 	<tr>
-	<td><img width="200" src="/static/{{game.image}}"></td>
+	<td><img width="200" src="{{game.image_url}}"></td>
 	<td>
 	<b>Creado por:</b> {{ game.profile.username }}
 	<br/>
