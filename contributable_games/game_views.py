@@ -27,22 +27,22 @@ def game_logout(request, game_name):
     return HttpResponseRedirect(settings.MAIN_SITE_DOMAIN + reverse('logout', urlconf="urls_main_site"))
 
 def serve_game_page(request, game_name, page_path):
-    try:
-        page = GamePage.objects.get(game=request.game, file=request.game.page_path+page_path)
-    except:
+    game = request.game
+    full_path = game.abs_pages_path+page_path
+    if path.isfile(full_path):
+        page = file(full_path, 'r')
+    else:
         return HttpResponseNotFound("This game doesn't have a %s page" % page_path)
     
-    game_files = [path.basename(x.file.name) for x in request.game.gamefile_set.all()]
-    
     js_includes = render_to_string('contributable_games/js_includes.html', {
-        'SETTINGS':settings,
-        'game':request.game,
-        'user':request.user,
-        'game_files': game_files,
+        'SETTINGS': settings,
+        'game': game,
+        'user': request.user,
+        'game_files': game.game_files,
         'logout_url': reverse('game_logout', args=[game_name]),
-        'login_url': request.game.login_url,
+        'login_url': game.login_url,
     })
-    return HttpResponse(force_unicode(page.file.read()).replace('{{ js_includes }}', js_includes))
+    return HttpResponse(force_unicode(page.read()).replace('{{ js_includes }}', js_includes))
 
 def new_play(request, game_name):
     profile = request.user.profile if request.user.is_authenticated() else None

@@ -3,9 +3,9 @@
 {% block after_field_sets %}{% endblock %}
 
 {% block after_related_objects %}
-  {% if game.files %}
+  {% if game.files_and_dirs %}
 	  <h3>Archivos de este juego <a href="{% url export_game game.id %}">(exportar)</a></h3>
-		{% for f in game.files %}
+		{% for f in game.files_and_dirs %}
 		 <li>{{ f }}</li>
 		{% endfor %}
   {% endif %}
