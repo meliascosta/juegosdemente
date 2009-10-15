@@ -92,7 +92,7 @@ class EditGame(UserModelAdmin):
         class Meta:
             model = Game
             fields = ('title', 'description', 'zip_file')
-        zip_file = forms.FileField()
+        zip_file = forms.FileField(label='Importar', help_text="Importar un archivo .zip exportado previamente")
         
         def clean_zip_file(self):
             zf = zipfile.ZipFile(self.cleaned_data['zip_file'], 'r')
@@ -132,6 +132,7 @@ def export_game(request, object_id, file_name):
     game = get_object_or_404(Game, pk=object_id, name=file_name)
     
     zf = zipfile.ZipFile(tempfile.mktemp('_export.zip', '%s_' % game.name), 'w')
+    import pdb;pdb.set_trace()
     for f in game.files:
         zf.write(str(os.path.join(game.abspath,f)),str(f))
     zf.close()
