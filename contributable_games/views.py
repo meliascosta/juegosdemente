@@ -129,7 +129,8 @@ edit_game = login_required(EditGame(Game, users_admin).change_view)
 
 def export_game(request, object_id, file_name):
     import os
-    game = get_object_or_404(Game, pk=object_id)
+    game = get_object_or_404(Game, pk=object_id, name=file_name)
+    
     zf = zipfile.ZipFile(tempfile.mktemp('_export.zip', '%s_' % game.name), 'w')
     for f in game.files:
         zf.write(str(os.path.join(game.abspath,f)),str(f))
