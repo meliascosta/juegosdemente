@@ -127,7 +127,7 @@ class EditGame(UserModelAdmin):
 
 edit_game = login_required(EditGame(Game, users_admin).change_view)
 
-def export_game(request, object_id):
+def export_game(request, object_id, file_name):
     import os
     game = get_object_or_404(Game, pk=object_id)
     zf = zipfile.ZipFile(tempfile.mktemp('_export.zip', '%s_' % game.name), 'w')
