@@ -1,25 +1,74 @@
 {% extends "base.html" %}
+{% block javascript %}
+{{ block.super }}
 
+	<script type="text/javascript">
+	$(function(){
+
+				$('a.boton').hover(
+					function() { $(this).addClass('ui-state-active'); }, 
+					function() { $(this).removeClass('ui-state-active'); }
+				);
+	
+				$('.dialog').dialog({
+					autoOpen: false,
+					width: 600,
+					modal: true,
+					buttons: {
+						"Ok": function() { 
+							$(this).dialog("close"); 
+						}}
+				});
+				
+				$('.dialog_link').click(function(){
+					match = this.id.match(/\d+/);
+					$('#dialog'+match).dialog('open');
+					return false;
+				});
+	});
+	</script>
+{% endblock %}
 {% block content %}
-<h1>Los juegos juegazos</h1>
-{% for game in games%}
-<div class="game">
-  <table border>
-	<th colspan="2">{{game.title|upper}}
-	   <a href="{% if user.is_authenticated %}{{ game.login_url }}{% else %}{{ game.view_game_url }}{% endif %}">Ver</a>
-  </th>
-	<tr>
-	<td><img width="200" src="{{game.image_url}}"></td>
-	<td>
-	<b>Creado por:</b> {{ game.profile.username }}
-	<br/>
-	<b>Descripcion: </b> {{game.description}}
-	<br/>
-	<b>Creado el: </b> {{game.created|date:"d/m/Y"}}
-	</td>
-	</tr>
-	</table> 
+<div class= "central ui-widget-content ui-corner-all">
+<h1 class="ui-widget-header ui-state-active ui-corner-top">Los juegos juegazos</h1>
+		{% for game in games%}
+		<div class= "ui-widget-content ui-corner-all game" style="position:relative;" >
+		<h1 class="ui-widget-header ui-corner-top ui-state-default">{{game.title|upper}}</h1>
+		<div style="position: absolute; left: 10px; top:30px;">
+		<img src="{{ game.image_url }}" >
+		</div>
+		<div style="position: absolute; left: 210px; top:30px;">
+		<p>
+		<b>Creado por:</b> {{ game.profile.username }}
+		<br/>
+		<b>Descripcion: </b> {{game.description}}
+		<br/>
+		<b>Creado el: </b> {{game.created|date:"d/m/Y"}}
+		</p>
+		</div>
+		<div style="position: absolute; bottom: 7%; right:13%;"><a id="dialog_link{{ forloop.counter }}" href="#" class="ui-state-default ui-corner-all dialog_link boton">Instrucciones</a></div>
+		<div style="position: absolute; bottom:7%;right:3%;"><a href="{% if user.is_authenticated %}{{ game.login_url }}{% else %}{{ game.view_game_url }}{% endif %}" class="ui-state-default ui-corner-all boton">Jugar</a></div>
+		</div>
+		<div class="dialog" title="{{ game.title|upper }}" id="dialog{{ forloop.counter }}">
+		<p>{{ game.instructions }}</p>
+		</div>
+
+		{% endfor %}
 </div>
+
+<div class= "lateral ui-widget-content ui-corner-all">
+<h1 class="ui-widget-header ui-corner-top ui-state-active">Al margen</h1>
+<p>¿Quienes somos?</p>
+<p>¿Que hacemos?</p>
+<p>¿Como puedo acceder a los datos?</p>
+<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px" >
+<h1 class="ui-widget-header ui-corner-top ui-state-default">Los Grosos</h1>
+{% for groso in grosos %}
+<img class="avatar" src= {{ groso.avatar }} >
+<p class="groso">{{ groso.name }}</p>
+<hr>
 {% endfor %}
+</div>
+</div>
 
 {% endblock %}

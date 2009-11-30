@@ -7,15 +7,15 @@
     <meta name="keywords" content="" />
     {% block javascript %}
         <script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/jquery-1.3.2.min.js"></script>
-       	<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/jquery-ui-1.7.2.custom.min.js"></script> 	    	
+       	<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/ui/jquery-ui-1.7.2.custom.js"></script> 	    	
     {% endblock %}
+    
     {% block css %}
     	<link rel="stylesheet" type="text/css" href="{{ SETTINGS.MEDIA_URL }}css/initial.css" />
     	<link rel="stylesheet" type="text/css" href="{{ SETTINGS.MEDIA_URL }}css/base.css" />
     	<link rel="stylesheet" type="text/css" href="{{ SETTINGS.MEDIA_URL }}css/changelists.css" />
     	<link rel="stylesheet" type="text/css" href="{{ SETTINGS.MEDIA_URL }}css/forms.css" />
     	<link rel="stylesheet" type="text/css" href="{{ SETTINGS.MEDIA_URL }}css/widgets.css" />
-      <link href="{{ SETTINGS.MEDIA_URL }}css/flick/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" />
     	<style class="text/css">
     		div#header {
     			background: #34415E none repeat scroll 0 0;
@@ -51,11 +51,11 @@
 </head>
 <body>
     <div id="container">
-        <div id="header">
-            <h1><a href="{% url index %}">LabGames</a></h1>
+        <div id="header" style="height: 110px">
+            <h1><a href="{% url index %}"><img src="/static/css/images/juegos.png"></a></h1>
             <p class="current-user">
             {% if user.is_authenticated %}
-            	Hola {{ user.username }} [<a href="{% url profile %}">Mis Juegos</a>] [<a href="{% url logout %}">Salir</a>]
+            	Hola {{ user.username }} [<a href="{% url profile %}">Mi Perfil</a>] [<a href="{% url logout %}">Salir</a>]
             {% else %}
             	Hola extra&ntilde;o/a [<a href="{% url login %}">Ingresar</a>]
             {% endif %}

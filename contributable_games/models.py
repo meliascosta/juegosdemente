@@ -14,6 +14,9 @@ class Profile(User):
     can_upload_games = models.BooleanField(default=False)
     birthdate = models.DateField()
     gender = models.SmallIntegerField(choices=[(1,'male'),(2,'female')])
+    handedness = models.SmallIntegerField(choices=[(1,'right'),(2,'left'),(3,'both')],default=1)
+    siblingnumber = models.PositiveIntegerField(default=0);
+    avatar = models.ImageField(upload_to='avatares');
     
 class Game(models.Model):
     name = models.SlugField(max_length=200, unique=True)
@@ -21,6 +24,7 @@ class Game(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
+    instructions = models.TextField(default='No hay')
     
     @property
     def static_dir(self):
@@ -53,8 +57,8 @@ class Game(models.Model):
     
     @property
     def view_game_url(self):
-        return settings.GAMES_SITE_DOMAIN +\
-                reverse('serve_game_index', args=[self.name], urlconf="urls_games_site")
+        return settings.GAMES_SITE_DOMAIN +self.name
+                
                 
     @property
     def login_url(self):
@@ -98,6 +102,25 @@ class Game(models.Model):
             return path.join(settings.MEDIA_URL, self.screenshots_path, screenshots[0])
         return ''
     
+    
+    @property
+    def ranking(self):
+        ranking = SavedPlay.objects.filter(game=self).order_by('-score')
+        checked = []
+        rankingU=[]
+        p = 0;
+        try:
+            for e in ranking:
+                if e.profile not in checked:
+                    checked.append(e.profile)
+                    p = p + 1;
+                    rankingU.append({'name': e.profile.username, 'score': e.score, 'puesto': p})
+               
+        except(AttributeError):
+            print "a"
+            
+        return rankingU
+        
     def create_directory_structure(self):
         for dirname in self.resource_path, self.page_path, self.game_file_path, self.screenshots_path:
             d = os.path.join(settings.MEDIA_ROOT, dirname)

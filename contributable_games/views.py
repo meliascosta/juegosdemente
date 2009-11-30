@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from models import Game, Profile
+from models import Game, Profile, SavedPlay
 from django.shortcuts import get_object_or_404, render_to_response
 from datetime import date, datetime
 from woozp_utils.view import AjaxView, request_response
@@ -16,20 +16,38 @@ import zipfile
 from unzip import unzip
 import tempfile
 
+def can_upload_games_required(view):
+	def wrapper(request, *args, **kargs):
+		if not request.user.profile.can_upload_games:
+			raise Http404()
+		return view(request, *args, **kargs)
+	return wrapper
+
 def index(request):
-    return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all()})
+    games = Game.objects.all()
+    grosos = []
+    for game in games:
+        ctop = SavedPlay.objects.filter(game=game).order_by('-score')[:2]
+        for player in ctop:
+            if ({'name':player.profile.username , 'avatar': player.profile.avatar.url} not in grosos):
+                grosos.append({'name':player.profile.username , 'avatar': player.profile.avatar.url})
+    return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all(),'grosos':grosos})
 
 @login_required
 def profile(request):
+    puestos = []
+    for game in Game.objects.all():
+        puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('name') == request.user.profile.username][0]})
     return request_response(request, 'contributable_games/profile.html',
-                            {'games': request.user.profile.game_set.all()})
+                            {'games': request.user.profile.game_set.all(), 'puestos':puestos})
+
 class Register(AjaxView):
     HTML = 'contributable_games/register.html'
     
     class Form(forms.ModelForm):
         class Meta:
             model = Profile
-            fields = ('username', 'email', 'birthdate', 'gender',)
+            fields = ('username', 'email', 'birthdate', 'gender','handedness','siblingnumber','avatar')
         password = forms.CharField(widget=forms.PasswordInput())
         password_confirm = forms.CharField(widget=forms.PasswordInput())
     
@@ -48,7 +66,7 @@ class Register(AjaxView):
         return request_response(request, self.HTML, {'form': self.Form()})
 
     def on_post_call(self, request):
-        form = self.Form(request.POST)
+        form = self.Form(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             user = authenticate(username=form.instance.username, password=form.cleaned_data['password'])
@@ -66,7 +84,7 @@ class UserModelAdmin(admin.ModelAdmin):
         request.session['ok_message'] = message
         
 class CreateGame(UserModelAdmin):
-    fields = ('name', 'title', 'description',)
+    fields = ('name', 'title', 'instructions','description',)
     change_form_template = 'contributable_games/change_object.html'
     
     def has_add_permission(self, request):
@@ -85,13 +103,13 @@ class CreateGame(UserModelAdmin):
         obj.profile = request.user.profile
         obj.save()
         obj.create_directory_structure()
-create_game = login_required(CreateGame(Game, users_admin).add_view)
+create_game = login_required(can_upload_games_required(CreateGame(Game, users_admin).add_view))
     
 class EditGame(UserModelAdmin):
     class form(forms.ModelForm):
         class Meta:
             model = Game
-            fields = ('title', 'description', 'zip_file')
+            fields = ('title', 'instructions','description', 'zip_file')
         zip_file = forms.FileField(label='Importar', help_text="Importar un archivo .zip exportado previamente")
         
         def clean_zip_file(self):
@@ -125,18 +143,18 @@ class EditGame(UserModelAdmin):
         obj.save()
         unzip(form.cleaned_data['zip_file'], obj.abspath)
 
-edit_game = login_required(EditGame(Game, users_admin).change_view)
+edit_game = login_required(can_upload_games_required(EditGame(Game, users_admin).change_view))
 
 def export_game(request, object_id, file_name):
     import os
     game = get_object_or_404(Game, pk=object_id, name=file_name)
     
-    zf = zipfile.ZipFile(tempfile.mktemp('_export.zip', '%s_' % game.name), 'w')
+    zf = zipfile.ZipFile(tempfile.mktemp('export.zip', '%s_' % game.name), 'w')
     import pdb;pdb.set_trace()
     for f in game.files:
         zf.write(str(os.path.join(game.abspath,f)),str(f))
-    zf.close()
     return serve(request, zf.filename, document_root='/')
+    zf.close()
 
 @login_required
 def login_to_game(request, game_name):
@@ -145,8 +163,8 @@ def login_to_game(request, game_name):
     for x in SESSION_KEY, BACKEND_SESSION_KEY:
         game_session[x] = request.session[x]
     game_session.save()
-    url = '%s%s?%s=%s' % (settings.GAMES_SITE_DOMAIN,
-                          reverse('serve_game_index', args=[game_name], urlconf="urls_games_site"),
+    url = '%s/%s?%s=%s' % (settings.GAMES_SITE_DOMAIN,
+                          game_name,
                           settings.LOGIN_KEY_NAME,
                           game_session.session_key)
     return HttpResponseRedirect(url)
