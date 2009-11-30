@@ -1,14 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Hola {{ user.username }}</h1>
-<a href="{% url create_game %}">Crear un juego nuevo</a>
+<img src="{{ user.profile.avatar.url }}" style="width:10%; float: left; margin:3%">
+<div style="float:left; margin-left: 5%">
+<h2>Tus puntajes en los diferentes juegos:</h2>
+<table id=htable style=\"color:white;table-layout:fixed;width:500px; text-align:center;margin-left: auto; margin-right: auto; background-color:brown; \">
+<table style= "color:white;table-layout:fixed;width:30%; text-align:center;margin-left: auto; margin-right: auto; background-color:brown;">
 
-{% if games %}
-	<h1>And here are your games</h1>
-	<ul>
-	{% for game in games %}
-		<li>{{ game.name }}: <a href="{{ game.login_url }}">View</a> | <a href="{% url edit_game game.id %}">Edit</a></li>
-	{% endfor %}
-	</ul>
+<thead style=\"background-color:black\"><tr><th>JUEGO</th><th>PUESTO</th><th>PUNTOS</th></tr></thead>{% for puesto in puestos %}
+	<tr>
+		<td>{{ puesto.game }} </td><td> {{ puesto.datos.puesto }}º </td><td>  {{ puesto.datos.score }} </td>
+	</tr>
+{% endfor %}
+
+</table>
+</div>
+{% if user.profile.can_upload_games %}
+	<hr>
+	<a href="{% url create_game %}">Crear un juego nuevo</a>
+
+	{% if games %}
+		<h1>Estos son tus juegos:</h1>
+		<ul>
+		{% for game in games %}
+			<li>{{ game.name }}: <a href="{{ game.login_url }}">View</a> | <a href="{% url edit_game game.id %}">Edit</a></li>
+		{% endfor %}
+		</ul>
+	{% endif %}
 {% endif %}
+
 {% endblock %}

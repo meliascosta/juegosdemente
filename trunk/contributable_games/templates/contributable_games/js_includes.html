@@ -19,7 +19,23 @@
 		'username': "{% firstof user.username '~Anonimo' %}",
 		'is_authenticated': {% if user.is_authenticated %}true{% else %}false{% endif %},
 		'gamefile_list': [{% for f in game_files %}'{{ f }}'{% if not forloop.last %},{% endif %}{% endfor %}],
-		'get_gamefile': function(gamefile_name){
+		'get_highscores': function(){
+			var ret;
+			$.ajax({
+			  type: "GET",
+			  url: '{% url get_score game.name %}',
+			  dataType: "json",
+				async: false,
+				error: function(err){
+					alert("No highscore");
+				},
+				success: function(json){
+					ret = json;
+				}
+			});
+	    	return ret;
+		},
+		'get_gamefile' : function(gamefile_name){
 			var ret;
 			$.ajax({
 			  type: "GET",
@@ -33,7 +49,7 @@
 					ret = json;
 				}
 			});
-	    return ret;
+	    	return ret;
 		}
 	}
 	

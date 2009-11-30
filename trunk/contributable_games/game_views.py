@@ -66,9 +66,18 @@ def log_action(request, game_name):
     
 def set_score(request, game_name):
     play = get_object_or_404(SavedPlay, pk=request.session['current_play_id_for_%s' % game_name])
-    play.score = request.POST['score']
+    play.score = request.GET['score']
     play.save()
     return json_to_response({'status':200})
+    
+
+def get_score(request, game_name):
+    g = Game.objects.filter(name=game_name)
+    ctopten = SavedPlay.objects.filter(game=g).order_by('-score')[:10]
+    topten=[];
+    for play in ctopten:
+        topten.append({'score':play.score, 'player_name': play.profile.username})
+    return json_to_response(topten)
 
 def _serve_game_path(request, directory, filename):
     if not path.exists(settings.MEDIA_ROOT+directory+filename):

@@ -14,7 +14,7 @@
 
 {% block content %}
 <h2>Ingresa tus datos para registrarte</h2>
-<form class="alone" method="post" action="{% url register %}">
+<form class="alone" method="post" enctype="multipart/form-data" action="{% url register %}">
 	{{ form.as_p }}
 	<input class="submit" type="submit" name="Enviar" value="Enviar"/>
 </form>
