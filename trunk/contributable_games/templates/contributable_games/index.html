@@ -25,6 +25,8 @@
 					$('#dialog'+match).dialog('open');
 					return false;
 				});
+
+
 	});
 	</script>
 {% endblock %}
@@ -56,19 +58,7 @@
 		{% endfor %}
 </div>
 
-<div class= "lateral ui-widget-content ui-corner-all">
-<h1 class="ui-widget-header ui-corner-top ui-state-active">Al margen</h1>
-<p>¿Quienes somos?</p>
-<p>¿Que hacemos?</p>
-<p>¿Como puedo acceder a los datos?</p>
-<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px" >
-<h1 class="ui-widget-header ui-corner-top ui-state-default">Los Grosos</h1>
-{% for groso in grosos %}
-<img class="avatar" src= {{ groso.avatar }} >
-<p class="groso">{{ groso.name }}</p>
-<hr>
-{% endfor %}
-</div>
-</div>
+
+
 
 {% endblock %}

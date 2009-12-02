@@ -17,29 +17,29 @@ from unzip import unzip
 import tempfile
 
 def can_upload_games_required(view):
-	def wrapper(request, *args, **kargs):
-		if not request.user.profile.can_upload_games:
-			raise Http404()
-		return view(request, *args, **kargs)
-	return wrapper
+    def wrapper(request, *args, **kargs):
+        if not request.user.profile.can_upload_games:
+            raise Http404()
+        return view(request, *args, **kargs)
+    return wrapper
 
 def index(request):
-    games = Game.objects.all()
-    grosos = []
-    for game in games:
-        ctop = SavedPlay.objects.filter(game=game).order_by('-score')[:2]
-        for player in ctop:
-            if ({'name':player.profile.username , 'avatar': player.profile.avatar.url} not in grosos):
-                grosos.append({'name':player.profile.username , 'avatar': player.profile.avatar.url})
+    grosos = top()
     return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all(),'grosos':grosos})
+
+def info(request):
+    grosos = top()
+    return request_response(request, 'contributable_games/info.html',{'grosos':grosos})
+
 
 @login_required
 def profile(request):
     puestos = []
+    grosos = top()
     for game in Game.objects.all():
         puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('name') == request.user.profile.username][0]})
     return request_response(request, 'contributable_games/profile.html',
-                            {'games': request.user.profile.game_set.all(), 'puestos':puestos})
+                            {'games': request.user.profile.game_set.all(), 'puestos':puestos,'grosos':grosos})
 
 class Register(AjaxView):
     HTML = 'contributable_games/register.html'
@@ -168,3 +168,13 @@ def login_to_game(request, game_name):
                           settings.LOGIN_KEY_NAME,
                           game_session.session_key)
     return HttpResponseRedirect(url)
+
+def top():   
+    games = Game.objects.all()
+    grosos = []
+    for game in games:
+        ctop = SavedPlay.objects.filter(game=game).order_by('-score')[:2]
+        for player in ctop:
+            if ({'name':player.profile.username , 'avatar': player.profile.avatar.url} not in grosos):
+                grosos.append({'name':player.profile.username , 'avatar': player.profile.avatar.url})
+    return grosos  
