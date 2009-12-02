@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^create_game/$', create_game, name='create_game'),
     url(r'^edit_game/(?P<object_id>.*)/$', edit_game, name='edit_game'),
     url(r'^export_game/(?P<object_id>.*)/(?P<file_name>.*)\.zip', export_game, name='export_game'),
-    url(r'^$', index, name='index'),        
+    url(r'^$', index, name='index'),
+    url(r'^info$', info, name='info'),        
 )
