@@ -1,0 +1,265 @@
+<html>
+<head>
+<title>Planning test</title>
+<!--<link rel="stylesheet" type="text/css" href="./res/style.css" />-->
+<style type="text/css">
+body {
+	background-color: #2E81FF;
+	margin: 0px;
+	padding: 0px;
+}
+
+#game-container{
+	position:absolute;
+	left:0%;
+	top:0%
+}
+
+.box {
+	position: absolute;
+}
+
+.drop {
+	width: 80px;
+	height: 100px;
+	background-color:transparent;
+}
+
+.drag {
+	position: absolute;
+	left: 0%;
+	bottom: 0%;
+}
+
+#fondo {
+	position: absolute;
+}
+
+</style>
+{{ js_includes }}
+<script type="text/javascript" src="./res/soundmanager2.js"></script>
+<script type="text/javascript" src="./res/checkpoint.js"></script>
+<script type="text/javascript">
+	function on_end(){
+	}
+	function on_check(){
+	}
+	$(function(){		
+		
+		//Set sounds
+		soundManager.url = './res/';
+		soundManager.onload = function() {
+		soundManager.createSound('levantar','./res/sounds/levantar.mp3');
+		soundManager.createSound('soltar_bien','./res/sounds/soltar_bien.mp3');
+		soundManager.createSound('check','./res/sounds/checkpoint.mp3');
+		soundManager.createSound('mal','./res/sounds/soltar_mal.mp3');
+		}
+		//Use checkpoint object
+		var check = new Checkpoint([5,10,15,20,25],on_end,on_check);
+		var logger = $.games.new_play();
+		var	level = $.games.get_gamefile("planning_gamefile0.txt");
+		logger.log("game_start",{"level":level});
+		var stages = level;
+		
+		/*
+		//a stage whitelist with a alf duplex diagonal
+		var half_duplex_diag = {'drop-1':['drop-2','drop-3'],
+								'drop-2':['drop-1','drop-4'],
+								'drop-3':['drop-1','drop-4'],
+								'drop-4':['drop-1','drop-2','drop-3']}
+		
+		
+		[{'origins_whitelist': {'drop-1':['drop-2','drop-3','drop-4'],
+                'drop-2':['drop-1','drop-4'],
+                'drop-3':['drop-1','drop-4'],
+                'drop-4':['drop-1','drop-2','drop-3']},
+       'initial_stage': [['drag-1','drop-2'],['drag-2','drop-3'],['drag-3','drop-4']],
+       'good_moves': 5,
+       'loose_moves': 8},
+            {'origins_whitelist': half_duplex_diag,
+             'initial_stage': [['drag-1','drop-1'],['drag-2','drop-3'],['drag-3','drop-2']],
+             'good_moves': 5,
+             'loose_moves': 8}]				 
+			*/			 
+						 
+		var desired_stage = [['drag-1','drop-1'],['drag-2','drop-2'],['drag-3','drop-3']]
+		var	mouseX = [],
+			mouseY = [],
+			t = [];
+			
+		$().mousemove(function(e){
+			tempD = new Date();
+			mouseX.push(e.pageX);
+			mouseY.push(e.pageY);
+			t.push(tempD.getTime())
+		});
+		
+		var current_moves //Moves made in the current stage
+		var current_stage = 0
+		
+		function get_stage(){
+			//get current stage entry
+			return stages[current_stage]
+		}
+		
+		function setup_stage(stage){
+			$.each(stage.initial_stage, function(k,i){ 
+				$('#'+i[1]).append($('#'+i[0])) 
+			})
+			current_moves = 0
+		}		
+		function next_stage(){
+			current_stage++
+			if(current_stage == stages.length){
+				check.displaytext('Completaste todos los niveles, vamos a empezar otra vez')
+				logger.log("game_end",{});
+				current_stage = 0
+			}
+			setup_stage(get_stage())	
+		}
+		
+		function win(){
+			soundManager.play('check');
+			if(current_moves <= get_stage().good_moves){
+				check.displaytext('Ganaste en '+current_moves+' movidas!! sos bueno!! ')
+			}else{
+				check.displaytext('Ganaste en '+current_moves+' movidas, trata de ganar en '+get_stage().good_moves)
+			}
+			check.step();
+			setTimeout(function(){next_stage()},3000);
+		}
+		
+		function loose(){
+			soundManager.play('mal');
+			check.fallback();
+			check.displaytext('Perdiste, probemos otra vez el mismo nivel')
+			setup_stage(get_stage())
+		}
+
+		function accept_item_predicate(draggable){
+			/* Only accept if I'm empty and dragger's origin is in whitelist */
+			var $this = $(this)
+			if($('.drag', $this).length){//I already have a .drag inside.
+					return false;
+			}
+			var origin = $(draggable).parent().attr('id')
+			var whitelist = get_stage().origins_whitelist[$this.attr('id')]
+			for(i in whitelist){
+				if(origin == whitelist[i]){
+					return true
+				}
+			}
+			return false
+		}
+		
+		function on_drop(ev, ui){
+			logger.log("good_drop",{"mouseX": mouseX, "mouseY": mouseY, "t":t , "moves": current_moves ,"max_moves": get_stage().loose_moves})
+			mouseX = [];
+			mouseY = [];
+			t = [];
+			current_moves++
+			soundManager.play('soltar_bien');
+			$(this).append($(ui.draggable)) //move the player
+			var won = true
+			for(i in desired_stage){ // Check if the desired stage was reached
+				if($('#'+desired_stage[i][1]).find('#'+desired_stage[i][0]).length == 0){
+					won = false
+					break
+				}
+			}
+			if(won){
+				//User won, set some time aside for repaints before telling him.
+				setTimeout(win, 500)
+			}
+			if(current_moves == get_stage().loose_moves){
+				//User lost, set some time aside for repaints before telling him.
+				setTimeout(loose, 500)
+			}
+		}
+		
+		function new_game(){
+			//Start draggables
+			$('.drag').draggable({
+				helper: 'clone',
+				zIndex: 1000,
+				start: function(){ $(this).hide(); soundManager.play('levantar'); },
+				stop: function(){ $(this).show() },
+			})
+			
+			//Start droppables
+			$('.drop')
+				.droppable({
+					accept: accept_item_predicate,
+					activeClass: 'drop-active',
+					hoverClass: 'drop-hover',
+					drop: on_drop,
+					tolerance: 'touch'
+				})
+				
+			setup_stage(get_stage())
+		}
+		
+		function game_main(){
+			var ESCALA = screen.height/768*1;
+			$("#img-fondo").attr("height",Math.round($("#img-fondo").attr("height")*ESCALA));
+			$("#fondo").css("left",(screen.width-Math.round(800*ESCALA))/2 +"px")
+						.css("top",90*ESCALA +"px");
+			$("#img-drop-1 > img").attr("height",Math.round($("#img-drop-1 > img").attr("height")*ESCALA));
+			$("#img-drop-2 > img").attr("height",Math.round($("#img-drop-2 > img").attr("height")*ESCALA));
+			$("#img-drop-3 > img").attr("height",Math.round($("#img-drop-3 > img").attr("height")*ESCALA));
+			$("#img-drop-4 > img").attr("height",Math.round($("#img-drop-4 > img").attr("height")*ESCALA));
+			$("#drag-1 > img").attr("height",Math.round($("#drag-1 > img").attr("height")*ESCALA));
+			$("#drag-2 > img").attr("height",Math.round($("#drag-2 > img").attr("height")*ESCALA));
+			$("#drag-3 > img").attr("height",Math.round($("#drag-3 > img").attr("height")*ESCALA));
+			$(".drop").css("height",parseInt($(".drop").css("height"))*ESCALA).css("width",parseInt($(".drop").css("width"))*ESCALA);
+			$("#img-drop-1").css("left",100*ESCALA+"px")
+							.css("top",40*ESCALA+"px");
+			$("#img-drop-2").css("left",500*ESCALA+"px")
+							.css("top",50*ESCALA+"px");							
+			$("#img-drop-3").css("left",100*ESCALA+"px")
+							.css("top",350*ESCALA+"px");
+			$("#img-drop-4").css("left",500*ESCALA+"px")
+							.css("top",350*ESCALA+"px");
+			$("#drop-1").css("left",(screen.width-Math.round(800*ESCALA))/2+ 160*ESCALA+"px")
+							.css("top",90*ESCALA+150*ESCALA+"px");
+			$("#drop-2").css("left",(screen.width-Math.round(800*ESCALA))/2+ 550*ESCALA+"px")
+							.css("top",90*ESCALA+150*ESCALA+"px");
+			$("#drop-3").css("left",(screen.width-Math.round(800*ESCALA))/2+160*ESCALA+"px")
+							.css("top",90*ESCALA+370*ESCALA+"px");
+			$("#drop-4").css("left",(screen.width-Math.round(800*ESCALA))/2+ 560*ESCALA+"px")
+							.css("top",90*ESCALA+400*ESCALA+"px");
+						
+			new_game();
+			
+		}
+		$(window).load(game_main());
+
+
+		
+});
+</script>
+</head>
+<body>
+<a class="back" href="index.html">
+	&lt;&lt; volver
+</a>
+
+<div class="fondo" id="fondo">
+	<img id= "img-fondo" src="./res/images/fondo.png">
+	<div class="img box" id="img-drop-1"><img src="./res/images/casa_ana.png"></div>
+	<div class="img box" id="img-drop-2"><img src="./res/images/casa_pancho.png"></div>
+	<div class="img box" id="img-drop-3"><img src="./res/images/casa_nubis.png"></div>
+	<div class="img box" id="img-drop-4"><img src="./res/images/casa_vacia.png"></div>
+</div>
+<div class="game-container" id="game-container">
+	<div id="drop-1" class="box drop"></div>
+	<div id="drop-2" class="box drop"></div>
+	<div id="drop-3" class="box drop"></div>
+	<div id="drop-4" class="box drop"></div>
+	<div id="drag-1" class="box drag"><img src="./res/images/ana.png" ></div>
+	<div id="drag-2" class="box drag"><img src="./res/images/pancho.png"></div>
+	<div id="drag-3" class="box drag"><img src="./res/images/nubis.png" ></div> 
+</div>
+
+</body>
+</html>
