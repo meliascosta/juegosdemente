@@ -1,4 +1,4 @@
-/*
+    /*
     DJANGO Admin styles
 */
 
@@ -22,7 +22,11 @@ div.central{
 div.lateral{
     width:23%;
     float:right;
-    margin-left: 10px
+    margin-left: 10px;
+    text-align:center;
+	font-size:1.1em;
+	font-weight: bold;
+	color: gray;
 }
 
 div.game{
