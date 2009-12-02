@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n admin_modify adminmedia %}
-
+{% block lateral %} {% endblock %}
 {% block content %}
 <h1>{{ title }}</h1>
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">{% block form_top %}{% endblock %}

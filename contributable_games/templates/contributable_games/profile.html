@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+
+{% block lateral %} {% endblock %}
 {% block content %}
 <h1>Hola {{ user.username }}</h1>
 <img src="{{ user.profile.avatar.url }}" style="width:10%; float: left; margin:3%">
@@ -16,7 +18,7 @@
 </table>
 </div>
 {% if user.profile.can_upload_games %}
-	<hr>
+
 	<a href="{% url create_game %}">Crear un juego nuevo</a>
 
 	{% if games %}

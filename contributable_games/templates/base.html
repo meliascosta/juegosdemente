@@ -71,7 +71,23 @@
         	{% if error_message %}
         		<div class="message error_message">{{ error_message }}</div>
         	{% endif %}
-            {% block content %}{% endblock %}
+			
+	{% block lateral %}
+			<div class= "lateral ui-widget-content ui-corner-all">
+				<h1 class="ui-widget-header ui-corner-top ui-state-active">Al margen</h1>
+				<a href="{% url info %}"><img src="/static/css/images/info.png"></a>
+	
+				<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px" >
+					<h1 class="ui-widget-header ui-corner-top ui-state-default">Los Grosos</h1>
+					{% for groso in grosos %}
+					<img class="avatar" src= {{ groso.avatar }} >
+					<p class="groso">{{ groso.name }}</p>
+					<hr>
+					{% endfor %}
+				</div>
+			</div>
+		{% endblock %}
+    	{% block content %}{% endblock %}        
         </div><!-- #content -->
         <div id="footer">
         	Lab Games, by lo' pibe.
