@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html>
+<head>
+<title>Memory</title>
+<meta http-equiv="Content-Type" content="text-html; charset=utf-8"> 
+<!--<link rel="stylesheet" type="text/css" href="style.css" /> !-->
+<style type="text/css">
+body {
+	background-color: #7CBCD9;
+	margin: 0px;
+	padding: 0px;
+}
+img{
+	position: absolute;
+	top: 0px;
+	left 0px;
+}
+.ficha{
+	width: 165px;
+	height: 156px;
+	background-color: red;
+	position: absolute;
+}
+.places{
+	position: absolute;
+	background-color: #777777;
+	color: white;
+	font-size: 50px;
+	text-align: center;
+	border: double;	
+}
+#game-container{
+	width: 
+
+}
+
+.grid{
+	position: absolute;
+	left: 50%;
+	top: 10%;
+	margin-left: -400px;
+}
+
+</style>
+{{ js_includes }}
+<script type="text/javascript" src="./res/soundmanager2-nodebug-jsmin.js"></script>
+<script type="text/javascript" src="./res/checkpoint.js"></script>
+<!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+<script type="text/javascript">
+
+String.prototype.repeat = function( num ) // Extend the string type to include a repeat method
+{
+    return new Array( num + 1 ).join( this );
+}
+
+ if(!Array.indexOf){    // Include IndexOf in Explorer which doesn't have it
+      Array.prototype.indexOf = function(obj){
+          for(var i=0; i<this.length; i++){
+              if(this[i]==obj){
+                  return i;
+              }
+          }
+          return -1;
+      }
+  }
+
+
+function Trial($container, on_good, on_bad){
+	
+	var on_good = on_good,
+		on_bad = on_bad,
+		$cards = [],
+		$container = $container,
+		positions = [],
+		card_types = [],
+		CARD_SIZE = Math.round(100/1024*screen.width),
+		PLACE_BORDER = Math.round(0.2*CARD_SIZE),
+		clicked = [];
+	
+	function set_board(){
+	//SET THE CARDS AND BOARD;	
+	for (i=0;i<positions.length;i++){
+		$($container).append("<div id=\"place"+ i +"\" class=\"places\" style=\"height:"+(CARD_SIZE + PLACE_BORDER)+"px;width: "+ (CARD_SIZE +  PLACE_BORDER) +"px;top: "+(positions[i][1] - PLACE_BORDER/2/screen.height*100)+"%; left: "+(positions[i][0] - PLACE_BORDER/2/screen.width*100)+"%; \">X</div>");
+	}
+	for(i=0;i<card_types.length;i++){
+		$($container).append("<div id=\"tarj"+ i +"\" class=\"ficha\">"+ "<img src=\"#\">".repeat(card_types[0].length) + " </div>");
+
+		$("#tarj"+i+"> img").each(function(j){
+			$(this).attr("src","./res/images/" + card_types[i][j] + ".gif");
+			$(this).attr("width",CARD_SIZE);
+			$(this).attr("height",CARD_SIZE);
+		});
+		$("#tarj"+i).css("left",positions[i][0]+"%")
+					.css("top",positions[i][1]+"%")
+					.css("width",CARD_SIZE+"px")
+					.css("height",CARD_SIZE+"px")
+					.bind("click",on_click);
+					
+
+	}
+	$cards = $("div.ficha");
+	// END SET
+	}
+		
+	function shuffle(){
+		var new_pos = positions;
+		for (i=new_pos.length+2;i>1;i--){
+			randN = Math.floor(Math.random()*new_pos.length);
+			temp = new_pos[randN];
+			new_pos[randN] = new_pos[new_pos.length-1];
+			new_pos[new_pos.length-1] = temp;
+		}
+		for (i=0;i<$cards.length;i++){
+			$($cards[i]).css("left",new_pos[i][0]+"%")
+					.css("top",new_pos[i][1]+"%")
+					.fadeIn(700);
+
+		}
+	}
+	
+	function on_click(){
+		numTarj = $(this).attr("id").match(/\d+/);
+		if (clicked.indexOf(this) == -1){
+			on_good(card_types[parseInt(numTarj[0])]);
+			clicked.push(this);
+			if (clicked.length >= card_types.length){
+				clicked = [];
+				return;
+			}
+		}else{
+			clicked = [];
+			on_bad(card_types[parseInt(numTarj[0])]);
+			//alert("perdiste");
+			$($cards).unbind("click");
+			setTimeout(function(){$($cards).bind("click",on_click);shuffle();},2000);
+			return;
+		}
+		$(this).fadeOut(500,shuffle);
+		$($cards).not(this).fadeOut('fast');
+	}
+	
+	this.newtrial = function(pos, c_types){
+		$($container +">div").fadeOut('fast',function(){$($cards).remove();	$("div.places").remove();});
+		positions = pos.slice(0);
+		card_types = c_types.slice(0);
+		for (i=0;i<positions.length;i++){
+			positions[i][1] = positions[i][1] + 20;
+		}
+		setTimeout(set_board,3000);
+	}
+
+}
+
+
+
+
+	
+$(function(){
+	var	$game_container = "#game-container";
+	
+	var		mouseX = [],
+			mouseY = [],
+			t = [],
+			trialN = 0,
+			tries = 1,
+			tempD = new Date(),
+			logger = $.games.new_play(),
+			level = $.games.get_gamefile("game_file_prueba.txt");
+			
+	var check = new Checkpoint(level.Checkpoints,on_end,on_check);
+	var trial = new Trial($game_container,on_good,on_bad); 
+	logger.log("GAME_STARTED", {"time": tempD.getTime()});
+		
+			
+		$().mousemove(function(e){
+			tempD = new Date();
+			mouseX.push(e.pageX);
+			mouseY.push(e.pageY);
+			t.push(tempD.getTime())
+		});
+		
+		
+		// GAME FLOW
+		check.displaytext("Se largaaaaaa....")
+		check.set_at(0);
+		trial.newtrial(level.Trials[0].Positions,level.Trials[0].Card_types); // Set the first trial
+			
+		function on_good(ficha){
+			soundManager.play('bien');
+			check.step();
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "trial": trialN ,"tries": tries, "ficha": ficha});
+		}
+		
+		function on_bad(ficha){
+			tries++;
+			soundManager.play('mal');
+			check.displaytext("Uh! Proba de nuevo...");
+			check.fallback();
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "rtime": t[t.length-1], "trial": trialN ,"tries": tries, "ficha": ficha});
+		}
+		function on_check(){
+			soundManager.play('check');
+			check.displaytext("Bien! A ver proba con este...");
+			trialN++;
+			tries = 0;
+			trial.newtrial(level.Trials[trialN].Positions,level.Trials[trialN].Card_types);
+		}
+		function on_end(){
+			logger.log("end_trial",{});
+			logger.log("end_game",{});
+			check.displaytext("el fin!!");
+			trialN = 0;
+			setTimeout(function(){
+				check.set_at(0);
+				trial.newtrial(level.Trials[trialN].Positions,level.Trials[trialN].Card_types);
+			},1500)
+		}
+		
+		
+		
+		soundManager.url = './res/';
+		soundManager.onload = function() {
+		  soundManager.createSound('check','./res/sounds/checkpoint.mp3');
+		  soundManager.createSound('bien','./res/sounds/click_bien.mp3');
+		  soundManager.createSound('mal','./res/sounds/click_mal.mp3');
+		};
+
+})
+
+
+</script>
+</head>
+<body>
+
+<div id="game-container">
+</div>
+</body>
+</html>

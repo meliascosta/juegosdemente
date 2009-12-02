@@ -1,0 +1,34 @@
+.welcome {
+	background: white none repeat scroll 0% 50%;
+	border: 5px solid;
+	font-family: verdana;
+	position: absolute;
+	left: 25%;
+	width: 50%;
+	height: 80%;
+	top: 10%;
+	text-align: center;
+	z-index: 3000;
+}
+.welcome .start{
+	padding: 5px;
+	border: solid 3px #6677dd;
+	background: #8899ff;
+	bottom: 100px;
+	position: absolute;
+	width: 20%;
+	left: 40%;
+	cursor: pointer;
+}
+.back{
+	padding: 5px;
+	border: solid 3px #6677dd;
+	background: #8899ff;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
+	font-family: verdana;
+	text-decoration: none;
+	color: black;
+}

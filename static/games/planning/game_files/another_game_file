@@ -1,0 +1,18 @@
+{jugadas: 30,
+  trials: [
+    {
+      casas: {tl:'nubis', tr:'pancho', bl:'ana', br:'vacio'},
+      personajes: {tl:'pancho', tr:'ana', bl:'nubis', br:'vacio'},
+      diagonal: true,
+      max_movidas: 15,
+      min_movidas: 5
+    },
+    {
+      casas: {tl:'ana', tr:'pancho', bl:'nubis', br:'vacio'},
+      personajes: {tl:'pancho', tr:'ana', bl:'nubis', br:'vacio'},
+      diagonal: true,
+      max_movidas: 15,
+      min_movidas: 5
+    }
+  ]
+}
