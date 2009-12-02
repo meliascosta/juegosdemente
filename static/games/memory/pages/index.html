@@ -46,6 +46,7 @@ img{
 {{ js_includes }}
 <script type="text/javascript" src="./res/soundmanager2-nodebug-jsmin.js"></script>
 <script type="text/javascript" src="./res/checkpoint.js"></script>
+<script type="text/javascript" src="./res/highscore.js"></script>
 <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
 <script type="text/javascript">
 
@@ -66,10 +67,11 @@ String.prototype.repeat = function( num ) // Extend the string type to include a
   }
 
 
-function Trial($container, on_good, on_bad){
+function Trial($container, on_good, on_bad,on_win_trial){
 	
 	var on_good = on_good,
 		on_bad = on_bad,
+		on_win_trial = on_win_trial,
 		$cards = [],
 		$container = $container,
 		positions = [],
@@ -125,6 +127,7 @@ function Trial($container, on_good, on_bad){
 			on_good(card_types[parseInt(numTarj[0])]);
 			clicked.push(this);
 			if (clicked.length >= card_types.length){
+				on_win_trial();
 				clicked = [];
 				return;
 			}
@@ -133,7 +136,6 @@ function Trial($container, on_good, on_bad){
 			on_bad(card_types[parseInt(numTarj[0])]);
 			//alert("perdiste");
 			$($cards).unbind("click");
-			setTimeout(function(){$($cards).bind("click",on_click);shuffle();},2000);
 			return;
 		}
 		$(this).fadeOut(500,shuffle);
@@ -162,14 +164,18 @@ $(function(){
 	var		mouseX = [],
 			mouseY = [],
 			t = [],
-			trialN = 0,
-			tries = 1,
+			levelN = 0,
+			orderN=0;
+			tries = 0,
+			triesN = 0,
+			score = 0,
 			tempD = new Date(),
 			logger = $.games.new_play(),
 			level = $.games.get_gamefile("game_file_prueba.txt");
 			
 	var check = new Checkpoint(level.Checkpoints,on_end,on_check);
-	var trial = new Trial($game_container,on_good,on_bad); 
+	var scoreTable = new Highscore();
+	var trial = new Trial($game_container,on_good,on_bad,on_win_trial); 
 	logger.log("GAME_STARTED", {"time": tempD.getTime()});
 		
 			
@@ -184,37 +190,67 @@ $(function(){
 		// GAME FLOW
 		check.displaytext("Se largaaaaaa....")
 		check.set_at(0);
-		trial.newtrial(level.Trials[0].Positions,level.Trials[0].Card_types); // Set the first trial
+		trial.newtrial(level.Levels[0].tries[0][0].Positions,level.Levels[0].tries[0][0].Card_types); // Set the first trial
 			
 		function on_good(ficha){
 			soundManager.play('bien');
-			check.step();
-			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "trial": trialN ,"tries": tries, "ficha": ficha});
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":triesN, "ficha": ficha});
 		}
 		
 		function on_bad(ficha){
+			score = score - Math.floor(level.Levels[levelN].num_tarj/3);
 			tries++;
+			if (tries > level.Levels[levelN].num_tries){
+				tries = 0;
+			}
+			triesN++;
 			soundManager.play('mal');
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":triesN, "ficha": ficha});
+			if (triesN==3){
+				triesN =0;
+				orderN = 0;
+				score = score - 3*Math.floor(level.Levels[levelN].num_tarj/3);
+				check.displaytext("Oops! te caiste.");
+				check.fallback();
+			}else{
 			check.displaytext("Uh! Proba de nuevo...");
-			check.fallback();
-			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "rtime": t[t.length-1], "trial": trialN ,"tries": tries, "ficha": ficha});
+			}
+			trial.newtrial(level.Levels[levelN].tries[orderN][tries].Positions,level.Levels[levelN].tries[orderN][tries].Card_types);
 		}
+		
+
 		function on_check(){
 			soundManager.play('check');
 			check.displaytext("Bien! A ver proba con este...");
-			trialN++;
-			tries = 0;
-			trial.newtrial(level.Trials[trialN].Positions,level.Trials[trialN].Card_types);
 		}
+
 		function on_end(){
 			logger.log("end_trial",{});
 			logger.log("end_game",{});
 			check.displaytext("el fin!!");
-			trialN = 0;
+			levelN = 0;
+			orderN=0;
+			tries = 0;
+			triesN = 0;
+			$.games.set_score(puntos);
 			setTimeout(function(){
 				check.set_at(0);
-				trial.newtrial(level.Trials[trialN].Positions,level.Trials[trialN].Card_types);
+				trial.newtrial(level.Levels[0].tries[0][0].Positions,level.Levels[0].tries[0][0].Card_types); // Set the first trial
 			},1500)
+		}
+		function on_win_trial(){
+			score = score + level.Levels[levelN].num_tarj;
+			if (levelN>=level.levels_num){return}
+			orderN++;
+			check.step();
+			console.log("levelN",levelN," orderN",orderN);
+			if (orderN==level.Levels[levelN].orders){
+			levelN++;
+			orderN = 0;
+			tries = 0;
+			triesN = 0;
+			}
+			trial.newtrial(level.Levels[levelN].tries[orderN][tries].Positions,level.Levels[levelN].tries[orderN][tries].Card_types);
 		}
 		
 		
@@ -232,7 +268,7 @@ $(function(){
 </script>
 </head>
 <body>
-
+<div id="salir" class="boton"></div>
 <div id="game-container">
 </div>
 </body>
