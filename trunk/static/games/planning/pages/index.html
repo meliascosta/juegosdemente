@@ -15,25 +15,71 @@ body {
 	top:0%
 }
 
-.box {
-	position: absolute;
-}
-
 .drop {
-	width: 80px;
-	height: 100px;
 	background-color:transparent;
+	position:absolute;
+	width: 12%;
+	height:20%;
+}
+#drop-1{
+	left:20%;
+	top:20%;
+}
+#drop-2{
+	left:76%;
+	top:22%;
 }
 
+#drop-3{
+	left:18%;
+	top:60%;
+}
+#drop-4{
+	left:73%;
+	top:66%;
+}
+
+.casa{
+	width:35%;
+	position:absolute;
+}
+.imgc{
+	width:100%;
+}
+#img-drop-1{
+	top: 0%;
+	left:7%;
+}
+#img-drop-2{
+	top: 0%;
+	left:62%;
+}
+#img-drop-3{
+	top: 53%;
+	left:5%;
+}
+#img-drop-4{
+	top: 51%;
+	left:60%;
+}
+.imgp{
+	width:100%;
+}
 .drag {
 	position: absolute;
-	left: 0%;
-	bottom: 0%;
 }
 
 #fondo {
 	position: absolute;
+	width:50%;
+	left:50%;
+	margin-left: -25%;
+	top:25%;
 }
+#img-fondo{
+	width:100%;	
+}
+
 
 </style>
 {{ js_includes }}
@@ -53,6 +99,7 @@ body {
 		soundManager.createSound('soltar_bien','./res/sounds/soltar_bien.mp3');
 		soundManager.createSound('check','./res/sounds/checkpoint.mp3');
 		soundManager.createSound('mal','./res/sounds/soltar_mal.mp3');
+		new_game();
 		}
 		//Use checkpoint object
 		var check = new Checkpoint([5,10,15,20,25],on_end,on_check);
@@ -199,66 +246,26 @@ body {
 			setup_stage(get_stage())
 		}
 		
-		function game_main(){
-			var ESCALA = screen.height/768*1;
-			$("#img-fondo").attr("height",Math.round($("#img-fondo").attr("height")*ESCALA));
-			$("#fondo").css("left",(screen.width-Math.round(800*ESCALA))/2 +"px")
-						.css("top",90*ESCALA +"px");
-			$("#img-drop-1 > img").attr("height",Math.round($("#img-drop-1 > img").attr("height")*ESCALA));
-			$("#img-drop-2 > img").attr("height",Math.round($("#img-drop-2 > img").attr("height")*ESCALA));
-			$("#img-drop-3 > img").attr("height",Math.round($("#img-drop-3 > img").attr("height")*ESCALA));
-			$("#img-drop-4 > img").attr("height",Math.round($("#img-drop-4 > img").attr("height")*ESCALA));
-			$("#drag-1 > img").attr("height",Math.round($("#drag-1 > img").attr("height")*ESCALA));
-			$("#drag-2 > img").attr("height",Math.round($("#drag-2 > img").attr("height")*ESCALA));
-			$("#drag-3 > img").attr("height",Math.round($("#drag-3 > img").attr("height")*ESCALA));
-			$(".drop").css("height",parseInt($(".drop").css("height"))*ESCALA).css("width",parseInt($(".drop").css("width"))*ESCALA);
-			$("#img-drop-1").css("left",100*ESCALA+"px")
-							.css("top",40*ESCALA+"px");
-			$("#img-drop-2").css("left",500*ESCALA+"px")
-							.css("top",50*ESCALA+"px");							
-			$("#img-drop-3").css("left",100*ESCALA+"px")
-							.css("top",350*ESCALA+"px");
-			$("#img-drop-4").css("left",500*ESCALA+"px")
-							.css("top",350*ESCALA+"px");
-			$("#drop-1").css("left",(screen.width-Math.round(800*ESCALA))/2+ 160*ESCALA+"px")
-							.css("top",90*ESCALA+150*ESCALA+"px");
-			$("#drop-2").css("left",(screen.width-Math.round(800*ESCALA))/2+ 550*ESCALA+"px")
-							.css("top",90*ESCALA+150*ESCALA+"px");
-			$("#drop-3").css("left",(screen.width-Math.round(800*ESCALA))/2+160*ESCALA+"px")
-							.css("top",90*ESCALA+370*ESCALA+"px");
-			$("#drop-4").css("left",(screen.width-Math.round(800*ESCALA))/2+ 560*ESCALA+"px")
-							.css("top",90*ESCALA+400*ESCALA+"px");
-						
-			new_game();
 			
-		}
-		$(window).load(game_main());
-
-
-		
+				
 });
 </script>
 </head>
 <body>
-<a class="back" href="index.html">
-	&lt;&lt; volver
-</a>
 
 <div class="fondo" id="fondo">
 	<img id= "img-fondo" src="./res/images/fondo.png">
-	<div class="img box" id="img-drop-1"><img src="./res/images/casa_ana.png"></div>
-	<div class="img box" id="img-drop-2"><img src="./res/images/casa_pancho.png"></div>
-	<div class="img box" id="img-drop-3"><img src="./res/images/casa_nubis.png"></div>
-	<div class="img box" id="img-drop-4"><img src="./res/images/casa_vacia.png"></div>
-</div>
-<div class="game-container" id="game-container">
-	<div id="drop-1" class="box drop"></div>
-	<div id="drop-2" class="box drop"></div>
-	<div id="drop-3" class="box drop"></div>
-	<div id="drop-4" class="box drop"></div>
-	<div id="drag-1" class="box drag"><img src="./res/images/ana.png" ></div>
-	<div id="drag-2" class="box drag"><img src="./res/images/pancho.png"></div>
-	<div id="drag-3" class="box drag"><img src="./res/images/nubis.png" ></div> 
+	<div class="casa" id="img-drop-1"><img class= "imgc" src="./res/images/casa_ana.png"></div>
+	<div class="casa" id="img-drop-2"><img class= "imgc" src="./res/images/casa_pancho.png"></div>
+	<div class="casa" id="img-drop-3"><img class= "imgc" src="./res/images/casa_nubis.png"></div>
+	<div class="casa" id="img-drop-4"><img class= "imgc" src="./res/images/casa_vacia.png"></div>
+	<div id="drop-1" class="drop"></div>
+	<div id="drop-2" class="drop"></div>
+	<div id="drop-3" class="drop"></div>
+	<div id="drop-4" class="drop"></div>
+	<div id="drag-1" class="drag"><img class= "imgp" src="./res/images/ana.png" ></div>
+	<div id="drag-2" class="drag"><img  class= "imgp" src="./res/images/pancho.png"></div>
+	<div id="drag-3" class="drag"><img class= "imgp" src="./res/images/nubis.png" ></div> 
 </div>
 
 </body>
