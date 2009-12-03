@@ -11,28 +11,54 @@ body {
 	margin: 0px;
 	padding: 0px;
 }
+a{
+	color: white;
+	text-decoration:none;
+}
+p{
+	margin:0px;
+	padding:0px;
+}
 img{
 	position: absolute;
 	top: 0px;
 	left 0px;
 }
+div.boton{
+	position: absolute;
+	top: 0;
+	right: 0;
+	text-align:center;
+	z-index:5;
+	font-weight:bold;
+	background-color: #5A8EC6;
+	color: white;
+	cursor:pointer;
+	cursor:hand;
+}
+div.boton:hover {
+     background-color: red;
+}
 .ficha{
-	width: 165px;
-	height: 156px;
-	background-color: red;
+	width: 6em;
+	margin-left:0.2em;
+	margin-top:0.2em;
+	height: 6em;
+	background-color: transparent;
 	position: absolute;
 }
+.imgficha{
+	width: 100%;
+}
 .places{
+	width: 2em;
+	height: 2em;
 	position: absolute;
 	background-color: #777777;
 	color: white;
 	font-size: 50px;
 	text-align: center;
 	border: double;	
-}
-#game-container{
-	width: 
-
 }
 
 .grid{
@@ -76,27 +102,21 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		$container = $container,
 		positions = [],
 		card_types = [],
-		CARD_SIZE = Math.round(100/1024*screen.width),
-		PLACE_BORDER = Math.round(0.2*CARD_SIZE),
 		clicked = [];
 	
 	function set_board(){
 	//SET THE CARDS AND BOARD;	
 	for (i=0;i<positions.length;i++){
-		$($container).append("<div id=\"place"+ i +"\" class=\"places\" style=\"height:"+(CARD_SIZE + PLACE_BORDER)+"px;width: "+ (CARD_SIZE +  PLACE_BORDER) +"px;top: "+(positions[i][1] - PLACE_BORDER/2/screen.height*100)+"%; left: "+(positions[i][0] - PLACE_BORDER/2/screen.width*100)+"%; \">X</div>");
+		$($container).append("<div id=\"place"+ i +"\" class=\"places\" style=\"top: "+positions[i][1]+"%; left: "+positions[i][0]+"%; \">X</div>");
 	}
 	for(i=0;i<card_types.length;i++){
-		$($container).append("<div id=\"tarj"+ i +"\" class=\"ficha\">"+ "<img src=\"#\">".repeat(card_types[0].length) + " </div>");
+		$($container).append("<div id=\"tarj"+ i +"\" class=\"ficha\">"+ "<img class=imgficha src=\"#\">".repeat(card_types[0].length) + " </div>");
 
 		$("#tarj"+i+"> img").each(function(j){
 			$(this).attr("src","./res/images/" + card_types[i][j] + ".gif");
-			$(this).attr("width",CARD_SIZE);
-			$(this).attr("height",CARD_SIZE);
 		});
 		$("#tarj"+i).css("left",positions[i][0]+"%")
 					.css("top",positions[i][1]+"%")
-					.css("width",CARD_SIZE+"px")
-					.css("height",CARD_SIZE+"px")
 					.bind("click",on_click);
 					
 
@@ -146,14 +166,14 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		$($container +">div").fadeOut('fast',function(){$($cards).remove();	$("div.places").remove();});
 		positions = pos.slice(0);
 		card_types = c_types.slice(0);
-		for (i=0;i<positions.length;i++){
-			positions[i][1] = positions[i][1] + 20;
-		}
 		setTimeout(set_board,3000);
+	}
+	
+	this.end_trial = function(){
+		$($container +">div").fadeOut('fast',function(){$($cards).remove();	$("div.places").remove();});
 	}
 
 }
-
 
 
 
@@ -174,9 +194,10 @@ $(function(){
 			level = $.games.get_gamefile("game_file_prueba.txt");
 			
 	var check = new Checkpoint(level.Checkpoints,on_end,on_check);
-	var scoreTable = new Highscore();
 	var trial = new Trial($game_container,on_good,on_bad,on_win_trial); 
 	logger.log("GAME_STARTED", {"time": tempD.getTime()});
+		
+
 		
 			
 		$().mousemove(function(e){
@@ -188,10 +209,19 @@ $(function(){
 		
 		
 		// GAME FLOW
-		check.displaytext("Se largaaaaaa....")
-		check.set_at(0);
-		trial.newtrial(level.Levels[0].tries[0][0].Positions,level.Levels[0].tries[0][0].Card_types); // Set the first trial
-			
+		function new_game(){
+			check.displaytext("Se largaaaaaa....")
+			check.set_at(0);
+			trial.newtrial(level.Levels[0].tries[0][0].Positions,level.Levels[0].tries[0][0].Card_types); // Set the first trial
+		}
+		var scoreTable = new Highscore(new_game);
+		
+		function topscore(){
+			$.games.set_score(score);
+			scoreTable.showTable(score)
+			trial.end_trial();
+		}
+		
 		function on_good(ficha){
 			soundManager.play('bien');
 			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":triesN, "ficha": ficha});
@@ -221,7 +251,6 @@ $(function(){
 
 		function on_check(){
 			soundManager.play('check');
-			check.displaytext("Bien! A ver proba con este...");
 		}
 
 		function on_end(){
@@ -232,18 +261,18 @@ $(function(){
 			orderN=0;
 			tries = 0;
 			triesN = 0;
-			$.games.set_score(puntos);
+			$.games.set_score(score);
 			setTimeout(function(){
 				check.set_at(0);
 				trial.newtrial(level.Levels[0].tries[0][0].Positions,level.Levels[0].tries[0][0].Card_types); // Set the first trial
 			},1500)
 		}
 		function on_win_trial(){
+			check.displaytext("Bien! A ver proba con este...");
 			score = score + level.Levels[levelN].num_tarj;
 			if (levelN>=level.levels_num){return}
 			orderN++;
 			check.step();
-			console.log("levelN",levelN," orderN",orderN);
 			if (orderN==level.Levels[levelN].orders){
 			levelN++;
 			orderN = 0;
@@ -253,8 +282,9 @@ $(function(){
 			trial.newtrial(level.Levels[levelN].tries[orderN][tries].Positions,level.Levels[levelN].tries[orderN][tries].Card_types);
 		}
 		
-		
-		
+		new_game();
+		$("#salir").bind("click",topscore);
+		soundManager.debugMode = false;
 		soundManager.url = './res/';
 		soundManager.onload = function() {
 		  soundManager.createSound('check','./res/sounds/checkpoint.mp3');
@@ -268,7 +298,7 @@ $(function(){
 </script>
 </head>
 <body>
-<div id="salir" class="boton"></div>
+<div id="salir" class="boton">SALIR</div>
 <div id="game-container">
 </div>
 </body>

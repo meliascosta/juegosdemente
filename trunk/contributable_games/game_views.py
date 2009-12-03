@@ -72,12 +72,8 @@ def set_score(request, game_name):
     
 
 def get_score(request, game_name):
-    g = Game.objects.filter(name=game_name)
-    ctopten = SavedPlay.objects.filter(game=g).order_by('-score')[:10]
-    topten=[];
-    for play in ctopten:
-        topten.append({'score':play.score, 'player_name': play.profile.username})
-    return json_to_response(topten)
+    g = Game.objects.filter(name=game_name)[0]
+    return json_to_response(g.ranking)
 
 def _serve_game_path(request, directory, filename):
     if not path.exists(settings.MEDIA_ROOT+directory+filename):
