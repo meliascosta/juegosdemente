@@ -165,7 +165,7 @@ function on_end(){
 		soundManager.createSound('correct','./res/sounds/correct.mp3');
 		soundManager.createSound('wrong','./res/sounds/wrong.mp3');
         soundManager.createSound('check','./res/sounds/checkpoint.mp3');
-        $(window).load(reset());
+		reset();
 		}
         
         var LEFT_KEY = 97,//a
@@ -180,7 +180,7 @@ function on_end(){
             reloj = new TimeKeeper($('div#reloj')),
             current_game= new ControlGame(level.game),
             check = new Checkpoint(level.Checkpoints,on_end,on_check),
-            scoreTable = new Highscore();
+            scoreTable = new Highscore(reset);
         
 
         function presentar_flecha(){
@@ -209,7 +209,7 @@ function on_end(){
         
         function fin(puntos){
             soundManager.play('choque');
-        	$("#fin").fadeIn(6000,function(){$("#fin").fadeTo("fast",0.7);scoreTable.showTable(puntos);});
+        	$("#fin").fadeIn(6000,function(){scoreTable.showTable(puntos);});
             $.games.set_score(puntos);
             check.displaytext('Erraste demasiadas veces');
             reloj.stop_global();
@@ -280,12 +280,7 @@ function on_end(){
             presentar_flecha();
         }
         
-        $("#incio").hide();
-        $("#fin").hide();
-        $("#fondo > img").attr("width",screen.width)
-                        .attr("height",screen.height);
-        $("#past > img").attr("width",screen.width);
-                      
+        
         $(document).keypress(handle_response);
     });
 </script>
@@ -296,6 +291,10 @@ body {
     overflow:hidden;
     background: #3D3D3D;
     font-family: Helvetica;
+}
+a{
+	text-decoration:none;
+	color: white;
 }
 
 div#flecha {
@@ -343,6 +342,7 @@ div#tiempo_total{
 }
 #pasto{
     position: absolute;
+	width:100%;
     bottom: 0px;
     left: 0px;
 }
@@ -350,15 +350,15 @@ div#tiempo_total{
     position: absolute;
 }
 #inicio{
-    left: 50%;
+	left: 50%;
     top: 50%;
     margin-left: -250px;
     margin-top: -162px;
 }
 #fin{
+	display:none;
     left: 60%;
     bottom: 10%;
-    z-index: 15;
 }
     
 </style>
