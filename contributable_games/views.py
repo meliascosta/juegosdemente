@@ -37,7 +37,10 @@ def profile(request):
     puestos = []
     grosos = top()
     for game in Game.objects.all():
-        puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('name') == request.user.profile.username][0]})
+        try:
+            puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('name') == request.user.profile.username][0]})
+        except IndexError:
+            pass # No jugaste a este juego
     return request_response(request, 'contributable_games/profile.html',
                             {'games': request.user.profile.game_set.all(), 'puestos':puestos,'grosos':grosos})
 
