@@ -8,7 +8,30 @@ body {
 	margin: 0px;
 	padding: 0px;
 }
+a{
+	color: white;
+	text-decoration:none;
+}
+p{
+	margin:0px;
+	padding:0px;
+}
 
+div.boton{
+	position: absolute;
+	top: 0;
+	right: 0;
+	text-align:center;
+	z-index:5;
+	font-weight:bold;
+	background-color: #5A8EC6;
+	color: white;
+	cursor:pointer;
+	cursor:hand;
+}
+div.boton:hover {
+     background-color: red;
+}
 #game-container{
 	position:absolute;
 	left:0%;
@@ -141,8 +164,10 @@ body {
 			t.push(tempD.getTime())
 		});
 		
-		var current_moves //Moves made in the current stage
-		var current_stage = 0
+		var current_moves; //Moves made in the current stage
+		var current_stage = 0;
+		var scoreTable = new Highscore(new_game);
+		var score = 0;
 		
 		function get_stage(){
 			//get current stage entry
@@ -223,7 +248,10 @@ body {
 				setTimeout(loose, 500)
 			}
 		}
-		
+		function topscore(){
+			$.games.set_score(score);
+			scoreTable.showTable(score)
+		}
 		function new_game(){
 			//Start draggables
 			$('.drag').draggable({
@@ -267,6 +295,6 @@ body {
 	<div id="drag-2" class="drag"><img  class= "imgp" src="./res/images/pancho.png"></div>
 	<div id="drag-3" class="drag"><img class= "imgp" src="./res/images/nubis.png" ></div> 
 </div>
-
+<div id="salir" class="boton">SALIR</div>
 </body>
 </html>

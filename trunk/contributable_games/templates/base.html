@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
 <head>
     <title>LabGames</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -8,7 +8,8 @@
     {% block javascript %}
         <script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/jquery-1.3.2.min.js"></script>
        	<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/ui/jquery-ui-1.7.2.custom.js"></script>
-		<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/moniter.min.js"></script> 	    	
+		<script type="text/javascript" src="{{ SETTINGS.MEDIA_URL }}js/monitter.min.js"></script>
+		    <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script> 	    	
     {% endblock %}
     
     {% block css %}
@@ -53,8 +54,8 @@
 </head>
 <body>
     <div id="container">
-        <div id="header" style="height: 110px">
-            <h1><a href="{% url index %}"><img src="/static/css/images/juegos.png"></a></h1>
+        <div id="header" style="height: 110px; padding:0 0 12px 0px">
+            <a  href="{% url index %}"><img src="/static/css/images/juegos.jpg"></a>
             <p class="current-user">
             {% if user.is_authenticated %}
             	Hola {{ user.username }} [<a href="{% url profile %}">Mi Perfil</a>] [<a href="{% url logout %}">Salir</a>]
@@ -85,7 +86,7 @@
 				<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px" >
 					<h1 class="ui-widget-header ui-corner-top ui-state-default">Los Grosos</h1>
 					{% for groso in grosos %}
-					<img class="avatar" src= {{ groso.avatar }} >
+					<img class="avatar" src= "{{ groso.avatar }}" >
 					<p class="groso">{{ groso.name }}</p>
 					<hr>
 					{% endfor %}
@@ -93,7 +94,7 @@
 				<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px; height:250px;" >
 					<h1 class="ui-widget-header ui-corner-top ui-state-default">Novedades</h1>
 					
-					<div class="monitter" id="tweets" title="apple-fruit" lang="es">p</div>
+					<div class="monitter" id="tweets" title="apple" lang="en"></div>
 				</div>
 				
 			</div>

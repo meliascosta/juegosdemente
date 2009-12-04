@@ -165,7 +165,7 @@ function on_end(){
 		soundManager.createSound('correct','./res/sounds/correct.mp3');
 		soundManager.createSound('wrong','./res/sounds/wrong.mp3');
         soundManager.createSound('check','./res/sounds/checkpoint.mp3');
-		reset();
+		$(window).load(reset);
 		}
         
         var LEFT_KEY = 97,//a

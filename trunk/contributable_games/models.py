@@ -16,7 +16,7 @@ class Profile(User):
     gender = models.SmallIntegerField(choices=[(1,'male'),(2,'female')])
     handedness = models.SmallIntegerField(choices=[(1,'right'),(2,'left'),(3,'both')],default=1)
     siblingnumber = models.PositiveIntegerField(default=0);
-    avatar = models.ImageField(upload_to='avatares');
+    avatar = models.ImageField(upload_to='avatares',default='avatares/pepe.gif');
     
 class Game(models.Model):
     name = models.SlugField(max_length=200, unique=True)
