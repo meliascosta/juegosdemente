@@ -34,18 +34,23 @@ div.game{
     height: 200px;
     
 }
-
+img { -ms-interpolation-mode: bicubic; }
 img.avatar{
 float: left;
 clear: left;
 margin: 10px;
-width: 25%;
-height: 25%;
+width: 4em;
+height: 4em;
 }
 p.groso{
 font-size:15px;
 font-weight: bold;
 margin-top:10%;
+}
+p.current-user{
+position: absolute;
+bottom:0;
+right: 0;
 }
 a.boton { padding: .5em 1em; text-decoration: none; }
 p.boton {padding: .5em 1em; text-align:right;}

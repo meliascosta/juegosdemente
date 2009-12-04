@@ -63,5 +63,5 @@ TEMPLATE_LOADERS = (
 )
 
 MAIN_SITE_DOMAIN = 'http://localhost:8080'
-GAMES_SITE_DOMAIN = 'http://localhost:9090'
+GAMES_SITE_DOMAIN = 'http://localhost:9090/'
 LOGIN_KEY_NAME = 'login_key'

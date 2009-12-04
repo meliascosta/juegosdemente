@@ -166,7 +166,7 @@ def login_to_game(request, game_name):
     for x in SESSION_KEY, BACKEND_SESSION_KEY:
         game_session[x] = request.session[x]
     game_session.save()
-    url = '%s/%s?%s=%s' % (settings.GAMES_SITE_DOMAIN,
+    url = '%s%s?%s=%s' % (settings.GAMES_SITE_DOMAIN,
                           game_name,
                           settings.LOGIN_KEY_NAME,
                           game_session.session_key)
