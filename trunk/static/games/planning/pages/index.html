@@ -108,6 +108,7 @@ div.boton:hover {
 {{ js_includes }}
 <script type="text/javascript" src="./res/soundmanager2.js"></script>
 <script type="text/javascript" src="./res/checkpoint.js"></script>
+<script type="text/javascript" src="./res/highscore.js"></script>
 <script type="text/javascript">
 	function on_end(){
 	}
@@ -256,6 +257,7 @@ div.boton:hover {
 			//Start draggables
 			$('.drag').draggable({
 				helper: 'clone',
+				appendTo: 'body',
 				zIndex: 1000,
 				start: function(){ $(this).hide(); soundManager.play('levantar'); },
 				stop: function(){ $(this).show() },
@@ -272,6 +274,7 @@ div.boton:hover {
 				})
 				
 			setup_stage(get_stage())
+			$("#salir").bind('click',topscore)
 		}
 		
 			
