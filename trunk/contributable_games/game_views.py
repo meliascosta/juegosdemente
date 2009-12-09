@@ -73,7 +73,13 @@ def set_score(request, game_name):
 
 def get_score(request, game_name):
     g = Game.objects.filter(name=game_name)[0]
-    return json_to_response(g.ranking)
+    ranking = []
+    try:
+        for rank in g.ranking:
+            ranking.append({'name': rank['profile'].username,'score':rank['score']})
+    except:
+        pass #no existe el jugador
+    return json_to_response(ranking)
 
 def _serve_game_path(request, directory, filename):
     if not path.exists(settings.MEDIA_ROOT+directory+filename):
