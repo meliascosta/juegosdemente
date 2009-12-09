@@ -211,7 +211,7 @@ function on_end(){
             soundManager.play('choque');
         	$("#fin").fadeIn(6000,function(){scoreTable.showTable(puntos);});
             $.games.set_score(puntos);
-            check.displaytext('Erraste demasiadas veces');
+            check.displaytext('Se terminó');
             reloj.stop_global();
         }
 

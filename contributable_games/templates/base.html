@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>LabGames</title>
+    <link rel="shortcut icon" href="{{ SETTINGS.MEDIA_URL }}/css/images/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -55,7 +56,7 @@
 <body>
     <div id="container">
         <div id="header" style="height: 110px; padding:0 0 12px 0px">
-            <a  href="{% url index %}"><img src="/static/css/images/juegos.jpg"></a>
+            <a  href="{% url index %}"><img style="width:100%; height:100px" src="/static/css/images/juegos.jpg"></a>
             <p class="current-user">
             {% if user.is_authenticated %}
             	Hola {{ user.username }} [<a href="{% url profile %}">Mi Perfil</a>] [<a href="{% url logout %}">Salir</a>]
@@ -91,10 +92,10 @@
 					<hr>
 					{% endfor %}
 				</div>
-				<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px; height:250px;" >
+				<div class= "ui-widget-content ui-corner-all" style="position:relative; margin:10px; padding:3%" >
 					<h1 class="ui-widget-header ui-corner-top ui-state-default">Novedades</h1>
 					
-					<div class="monitter" id="tweets" title="apple" lang="en"></div>
+					<div class="monitter" id="tweets" title="meliascosta"></div>
 				</div>
 				
 			</div>
