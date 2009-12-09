@@ -38,11 +38,11 @@ def profile(request):
     grosos = top()
     for game in Game.objects.all():
         try:
-            puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('name') == request.user.profile.username][0]})
+            puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('profile') == request.user.profile][0]})
         except IndexError:
             pass # No jugaste a este juego
     return request_response(request, 'contributable_games/profile.html',
-                            {'games': request.user.profile.game_set.all(), 'puestos':puestos,'grosos':grosos})
+                            {'games': request.user.profile.game_set.all(), 'puestos':puestos})
 
 class Register(AjaxView):
     HTML = 'contributable_games/register.html'
@@ -176,8 +176,11 @@ def top():
     games = Game.objects.all()
     grosos = []
     for game in games:
-        ctop = SavedPlay.objects.filter(game=game).order_by('-score')[:2]
-        for player in ctop:
-            if ({'name':player.profile.username , 'avatar': player.profile.avatar.url} not in grosos):
-                grosos.append({'name':player.profile.username , 'avatar': player.profile.avatar.url})
+        ctop = game.ranking[:2]
+        try:
+            for player in ctop:
+                if ({'name':player.get('profile').username , 'avatar': player.get('profile').avatar.url} not in grosos):
+                    grosos.append({'name':player.get('profile').username , 'avatar': player.get('profile').avatar.url})
+        except:
+            pass #Ignorar al jugador que no se registro.
     return grosos  

@@ -114,7 +114,7 @@ class Game(models.Model):
                 if e.profile not in checked:
                     checked.append(e.profile)
                     p = p + 1;
-                    rankingU.append({'name': e.profile.username, 'score': e.score, 'puesto': p})
+                    rankingU.append({'profile': e.profile, 'score': e.score, 'puesto': p})
                
         except(AttributeError):
             print "a"
