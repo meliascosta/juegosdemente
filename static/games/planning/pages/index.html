@@ -199,6 +199,7 @@ div.boton:hover {
 				check.displaytext('Ganaste en '+current_moves+' movidas, trata de ganar en '+get_stage().good_moves)
 			}
 			check.step();
+			score = score + 1;
 			setTimeout(function(){next_stage()},3000);
 		}
 		
@@ -254,6 +255,8 @@ div.boton:hover {
 			scoreTable.showTable(score)
 		}
 		function new_game(){
+			score = 0;
+			check.set_at(0);
 			//Start draggables
 			$('.drag').draggable({
 				helper: 'clone',

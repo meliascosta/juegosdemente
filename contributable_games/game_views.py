@@ -74,11 +74,12 @@ def set_score(request, game_name):
 def get_score(request, game_name):
     g = Game.objects.filter(name=game_name)[0]
     ranking = []
-    try:
-        for rank in g.ranking:
+   
+    for rank in g.ranking:
+        try:
             ranking.append({'name': rank['profile'].username,'score':rank['score']})
-    except:
-        pass #no existe el jugador
+        except:
+            pass #no existe el jugador
     return json_to_response(ranking)
 
 def _serve_game_path(request, directory, filename):
