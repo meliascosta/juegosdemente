@@ -252,7 +252,8 @@ function on_end(){
                 correct = (e.which == LEFT_KEY && arrow.orientacion == 'left') ||
                           (e.which == RIGHT_KEY && arrow.orientacion == 'right');
             
-            correct = (arrow.kind == 'forward') ? correct : !correct;
+           correct = (arrow.kind == 'inverse') ? !correct : correct;
+		   correct = (arrow.kind == 'reverse_forward') ? !correct : correct;
             if(correct){
                 soundManager.play('correct');
                 var next = current_game.next_arrow_correct();
@@ -392,6 +393,10 @@ div#tiempo_total{
                 <img id= "img-forward_right" src="./res/images/forward_right.png">
                 <img id= "img-inverse_left" src="./res/images/inverse_left.png">
                 <img id= "img-inverse_right" src="./res/images/inverse_right.png">
+				<img id= "img-reverse_forward_left" src="./res/images/reverse_forward_left.png">
+                <img id= "img-reverse_forward_right" src="./res/images/reverse_forward_right.png">
+                <img id= "img-reverse_inverse_left" src="./res/images/reverse_inverse_left.png">
+                <img id= "img-reverse_inverse_right" src="./res/images/reverse_inverse_right.png">
 </div>
 <div class= "deco" id="inicio"><img src= "./res/images/inicio.png"></div>
 <div class= "deco" id="fin"><img src= "./res/images/fin.png"></div>
