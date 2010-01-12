@@ -191,7 +191,7 @@ $(function(){
 			score = 0,
 			tempD = new Date(),
 			logger = $.games.new_play(),
-			level = $.games.get_gamefile("game_file_prueba.txt");
+			level = $.games.get_gamefile("memory_gamefile0.txt");
 			
 	var check = new Checkpoint(level.Checkpoints,on_end,on_check);
 	var trial = new Trial($game_container,on_good,on_bad,on_win_trial); 
