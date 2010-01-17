@@ -245,7 +245,7 @@ $(function(){
 			}else{
 			check.displaytext("Uh! Proba de nuevo...");
 			}
-			trial.newtrial(level.Levels[levelN].tries[orderN][tries].Positions,level.Levels[levelN].tries[orderN][tries].Card_types);
+			trial.newtrial(level.Levels[levelN].tries[tries][orderN].Positions,level.Levels[levelN].tries[tries][orderN].Card_types);
 		}
 		
 
@@ -268,18 +268,21 @@ $(function(){
 			},1500)
 		}
 		function on_win_trial(){
-			check.displaytext("Bien! A ver proba con este...");
 			score = score + level.Levels[levelN].num_tarj;
 			if (levelN>=level.levels_num){return}
 			orderN++;
-			check.step();
 			if (orderN==level.Levels[levelN].orders){
 			levelN++;
 			orderN = 0;
 			tries = 0;
 			triesN = 0;
 			}
-			trial.newtrial(level.Levels[levelN].tries[orderN][tries].Positions,level.Levels[levelN].tries[orderN][tries].Card_types);
+			console.log("level:",levelN,"order:",orderN,"tries:",tries);
+			check.step();
+			check.displaytext("Bien! A ver proba con este...");
+			setTimeout(function(){
+			trial.newtrial(level.Levels[levelN].tries[tries][orderN].Positions,level.Levels[levelN].tries[tries][orderN].Card_types);
+			},1200);
 		}
 		
 		new_game();
