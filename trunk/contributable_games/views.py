@@ -50,7 +50,7 @@ class Register(AjaxView):
     class Form(forms.ModelForm):
         class Meta:
             model = Profile
-            fields = ('username', 'email', 'birthdate', 'gender','handedness','siblingnumber','avatar')
+            fields = ('username', 'email', 'birthdate', 'gender','handedness','siblingnumber','siblingorder','avatar')
         password = forms.CharField(widget=forms.PasswordInput())
         password_confirm = forms.CharField(widget=forms.PasswordInput())
     

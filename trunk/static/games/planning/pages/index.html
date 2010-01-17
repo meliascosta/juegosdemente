@@ -4,7 +4,7 @@
 <!--<link rel="stylesheet" type="text/css" href="./res/style.css" />-->
 <style type="text/css">
 body {
-	background-color: #2E81FF;
+	background-color: #2E81AA;
 	margin: 0px;
 	padding: 0px;
 }
@@ -97,12 +97,24 @@ div.boton:hover {
 	width:50%;
 	left:50%;
 	margin-left: -25%;
-	top:25%;
+	top:18%;
 }
 #img-fondo{
 	width:100%;	
 }
-
+#info{
+	position: absolute;
+	font-weight:bold;
+	margin-top:-4%;
+	color:#D1344E;
+	padding: 0.5%;
+	-moz-border-radius-topright: 10px;
+	-webkit-border-top-right-radius:10px;
+	-moz-border-radius-topleft: 10px;
+	-webkit-border-top-left-radius:10px;
+	font-size:1%px;
+	background-color:#E5EAFF;
+}
 
 </style>
 {{ js_includes }}
@@ -125,35 +137,20 @@ div.boton:hover {
 		soundManager.createSound('mal','./res/sounds/soltar_mal.mp3');
 		new_game();
 		}
-		//Use checkpoint object
-		var check = new Checkpoint([5,10,15,20,25],on_end,on_check);
+
 		var logger = $.games.new_play();
-		var	level = $.games.get_gamefile("planning_gamefile0.txt");
+		var current_gamefile = 0;
+		var	level = $.games.get_gamefile("gamefile_planning"+current_gamefile+".txt");
+		var check = new Checkpoint(level.Checkpoints,on_end,on_check);
 		logger.log("game_start",{"level":level});
-		var stages = level;
-		
-		/*
-		//a stage whitelist with a alf duplex diagonal
-		var half_duplex_diag = {'drop-1':['drop-2','drop-3'],
-								'drop-2':['drop-1','drop-4'],
-								'drop-3':['drop-1','drop-4'],
-								'drop-4':['drop-1','drop-2','drop-3']}
-		
-		
-		[{'origins_whitelist': {'drop-1':['drop-2','drop-3','drop-4'],
-                'drop-2':['drop-1','drop-4'],
-                'drop-3':['drop-1','drop-4'],
-                'drop-4':['drop-1','drop-2','drop-3']},
-       'initial_stage': [['drag-1','drop-2'],['drag-2','drop-3'],['drag-3','drop-4']],
-       'good_moves': 5,
-       'loose_moves': 8},
-            {'origins_whitelist': half_duplex_diag,
-             'initial_stage': [['drag-1','drop-1'],['drag-2','drop-3'],['drag-3','drop-2']],
-             'good_moves': 5,
-             'loose_moves': 8}]				 
-			*/			 
-						 
+		var stages = level.Levels;
 		var desired_stage = [['drag-1','drop-1'],['drag-2','drop-2'],['drag-3','drop-3']]
+		var current_moves; //Moves made in the current stage
+		var current_level = 0;
+		var current_trie = 0;
+		var current_trial = 0;
+		var scoreTable = new Highscore(new_game);
+		var score = 0;
 		var	mouseX = [],
 			mouseY = [],
 			t = [];
@@ -165,28 +162,38 @@ div.boton:hover {
 			t.push(tempD.getTime())
 		});
 		
-		var current_moves; //Moves made in the current stage
-		var current_stage = 0;
-		var scoreTable = new Highscore(new_game);
-		var score = 0;
 		
 		function get_stage(){
 			//get current stage entry
-			return stages[current_stage]
+			return stages[current_level][current_trie][current_trial]
 		}
 		
 		function setup_stage(stage){
-			$.each(stage.initial_stage, function(k,i){ 
+			console.log("cur trial",current_trial,"currlevel",current_level);
+			$.each(stage.initial_state, function(k,i){ 
 				$('#'+i[1]).append($('#'+i[0])) 
 			})
 			current_moves = 0
+			mov = get_stage().show_moves?get_stage().good_moves:'?';
+			$("#info > p").text('Movidas mínimas: '+mov);
 		}		
 		function next_stage(){
-			current_stage++
-			if(current_stage == stages.length){
-				check.displaytext('Completaste todos los niveles, vamos a empezar otra vez')
-				logger.log("game_end",{});
-				current_stage = 0
+			current_trial++
+			if(current_trial == stages[current_level][current_trie].length){
+				current_level++;
+				current_trial = 0;
+				current_trie=0;
+				if(current_level == stages.length){
+					logger.log("fase_end",{});
+					check.displaytext("Copado, seguimos...");
+					current_gamefile++;
+					level = $.games.get_gamefile("gamefile_planning"+current_gamefile+".txt");
+					stages = level.Levels;
+					$("#fondo").fadeOut();
+					setTimeout(function(){$("#fondo").fadeIn();},3000)
+					check.set_at(0);
+					current_level = 0;
+				}
 			}
 			setup_stage(get_stage())	
 		}
@@ -194,20 +201,25 @@ div.boton:hover {
 		function win(){
 			soundManager.play('check');
 			if(current_moves <= get_stage().good_moves){
-				check.displaytext('Ganaste en '+current_moves+' movidas!! sos bueno!! ')
+				check.displaytext('¡Bien, ganaste en '+current_moves+' movidas!')
 			}else{
-				check.displaytext('Ganaste en '+current_moves+' movidas, trata de ganar en '+get_stage().good_moves)
+				check.displaytext('Ganaste en '+current_moves+' movidas.')
 			}
 			check.step();
 			score = score + 1;
-			setTimeout(function(){next_stage()},3000);
+			setTimeout(function(){next_stage()},3500);
 		}
 		
 		function loose(){
 			soundManager.play('mal');
-			check.fallback();
-			check.displaytext('Perdiste, probemos otra vez el mismo nivel')
-			setup_stage(get_stage())
+			current_trie++;
+			check.displaytext('¡Uy, fueron demasiadas!')
+			if(current_trie==stages[current_level].length){
+				check.fallback();
+				current_trie = 0;
+				current_trial = 0;
+			}
+			next_stage(get_stage())
 		}
 
 		function accept_item_predicate(draggable){
@@ -244,6 +256,7 @@ div.boton:hover {
 			if(won){
 				//User won, set some time aside for repaints before telling him.
 				setTimeout(win, 500)
+				return;
 			}
 			if(current_moves == get_stage().loose_moves){
 				//User lost, set some time aside for repaints before telling him.
@@ -288,6 +301,7 @@ div.boton:hover {
 <body>
 
 <div class="fondo" id="fondo">
+	<div id="info"><p></p></div>
 	<img id= "img-fondo" src="./res/images/fondo.png">
 	<div class="casa" id="img-drop-1"><img class= "imgc" src="./res/images/casa_ana.png"></div>
 	<div class="casa" id="img-drop-2"><img class= "imgc" src="./res/images/casa_pancho.png"></div>
@@ -301,6 +315,7 @@ div.boton:hover {
 	<div id="drag-2" class="drag"><img  class= "imgp" src="./res/images/pancho.png"></div>
 	<div id="drag-3" class="drag"><img class= "imgp" src="./res/images/nubis.png" ></div> 
 </div>
+
 <div id="salir" class="boton">SALIR</div>
 </body>
 </html>

@@ -12,12 +12,12 @@ class BigIntegerField(models.IntegerField):
 
 class Profile(User):
     can_upload_games = models.BooleanField(default=False)
-    birthdate = models.DateField()
-    gender = models.SmallIntegerField(choices=[(1,'hombre'),(2,'mujer')])
-    handedness = models.SmallIntegerField(choices=[(1,'derecha'),(2,'izquierda'),(3,'ambas')])
-    siblingnumber = models.PositiveIntegerField(default=0);
-    siblingorder = models.PositiveIntegerField(default=0);
-    avatar = models.ImageField(upload_to='avatares',default='avatares/pepe.gif',height_field='80px',width_field='80px');
+    birthdate = models.DateField("Fecha de nacimiento")
+    gender = models.SmallIntegerField("Sexo",choices=[(1,'hombre'),(2,'mujer')])
+    handedness = models.SmallIntegerField("Mano mas habil",choices=[(1,'derecha'),(2,'izquierda'),(3,'ambas')])
+    siblingnumber = models.PositiveIntegerField("Hermanos en total",default=0);
+    siblingorder = models.PositiveIntegerField("Tu orden (1 es el mas grande)",default=0);
+    avatar = models.ImageField("tu avatar",upload_to='avatares',default='avatares/pepe.gif',height_field='80px',width_field='80px');
     
 class Game(models.Model):
     name = models.SlugField(max_length=200, unique=True)
