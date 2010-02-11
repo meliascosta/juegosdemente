@@ -139,10 +139,12 @@ function Trial($container, on_good, on_bad,on_win_trial){
 					.fadeIn(700);
 
 		}
+		$($cards).bind("click",on_click);
 	}
 	
 	function on_click(){
 		numTarj = $(this).attr("id").match(/\d+/);
+		$($cards).unbind("click");
 		if (clicked.indexOf(this) == -1){
 			on_good(card_types[parseInt(numTarj[0])]);
 			clicked.push(this);
@@ -155,7 +157,6 @@ function Trial($container, on_good, on_bad,on_win_trial){
 			clicked = [];
 			on_bad(card_types[parseInt(numTarj[0])]);
 			//alert("perdiste");
-			$($cards).unbind("click");
 			return;
 		}
 		$(this).fadeOut(500,shuffle);
@@ -187,7 +188,6 @@ $(function(){
 			levelN = 0,
 			orderN=0;
 			tries = 0,
-			triesN = 0,
 			score = 0,
 			tempD = new Date(),
 			logger = $.games.new_play(),
@@ -224,7 +224,7 @@ $(function(){
 		
 		function on_good(ficha){
 			soundManager.play('bien');
-			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":triesN, "ficha": ficha});
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":tries, "ficha": ficha});
 		}
 		
 		function on_bad(ficha){
@@ -233,11 +233,10 @@ $(function(){
 			if (tries > level.Levels[levelN].num_tries){
 				tries = 0;
 			}
-			triesN++;
 			soundManager.play('mal');
-			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":triesN, "ficha": ficha});
-			if (triesN==3){
-				triesN =0;
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries": tries, "ficha": ficha});
+			if (tries==2){
+				tries =0;
 				orderN = 0;
 				score = score - 3*Math.floor(level.Levels[levelN].num_tarj/3);
 				check.displaytext("Oops! te caiste.");
@@ -260,7 +259,6 @@ $(function(){
 			levelN = 0;
 			orderN=0;
 			tries = 0;
-			triesN = 0;
 			$.games.set_score(score);
 			setTimeout(function(){
 				check.set_at(0);
@@ -275,7 +273,6 @@ $(function(){
 			levelN++;
 			orderN = 0;
 			tries = 0;
-			triesN = 0;
 			}
 			console.log("level:",levelN,"order:",orderN,"tries:",tries);
 			check.step();
