@@ -159,6 +159,7 @@ function on_end(){
         
         // LOAD SOUNDS
         soundManager.url = './res/';
+        soundManager.debugMode = false;
 		soundManager.onload = function() {
 		soundManager.createSound('despegue','./res/sounds/despegue.mp3');
 		soundManager.createSound('choque','./res/sounds/choque.mp3');
