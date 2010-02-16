@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block lateral %} {% endblock %}
+
+{% block content %}
+
+<h1>Bienvenido {{ user.username }}</h1>
+<p>
+	Si estás viendo esto es porque sos un usuario certificado.
+</p>
+
+No soy un usario cerificado,<a href= "{% url logout %}">Sacame de acá</a>
+Si soy un usuario certificado <a href= "{% url login_to_game game %}">A jugar</a>. 
+
+{% endblock %}  

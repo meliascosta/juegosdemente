@@ -6,9 +6,10 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from models import Game, Profile, SavedPlay
+from django.utils import simplejson as json
 from django.shortcuts import get_object_or_404, render_to_response
 from datetime import date, datetime
-from woozp_utils.view import AjaxView, request_response
+from woozp_utils.view import AjaxView, request_response, json_to_response
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY
@@ -24,6 +25,15 @@ def can_upload_games_required(view):
     return wrapper
 
 def index(request):
+    if request.user.is_authenticated():
+        if request.user.profile.is_school_player:
+            import pdb;
+            pdb.set_trace()
+            if request.user.profile.last_stage_date == date.today():
+                return request_response(request,'contributable_games/yajugo.html')
+            stages = json.loads(request.user.profile.stage_list)
+            current = request.user.profile.current_stage
+            return request_response(request,'contributable_games/escuela.html',{'game':stages[current]['game']})
     grosos = top()
     return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all(),'grosos':grosos})
 
@@ -35,7 +45,6 @@ def info(request):
 @login_required
 def profile(request):
     puestos = []
-    grosos = top()
     for game in Game.objects.all():
         try:
             puestos.append({'game':game.title, 'datos':[k for k in game.ranking if k.get('profile') == request.user.profile][0]})
@@ -172,6 +181,7 @@ def login_to_game(request, game_name):
                           game_session.session_key)
     return HttpResponseRedirect(url)
 
+    
 def top():   
     games = Game.objects.all()
     grosos = []

@@ -10,7 +10,7 @@ function Highscore(new_game){
 		$("#htable").append("<tr><td><p>...</p></td><td><p>...</p></td></tr>");
 	}
 	$("#htable").append("<tr style=\"background-color:#E49213\"><td colspan= 2><p id=puntos>TUS PUNTOS: </p></td></tr>");
-	$("#htable").append("<tr style=\"background-color:red\"><td id=nuevo style=\"cursor:pointer;cursor:hand;\"><p>NUEVO</p></td><td id=\"exit\"><a href= \"http://localhost:8080/\">SALIR</a></td></tr>");
+	$("#htable").append("<tr style=\"background-color:red\"><td id=nuevo style=\"cursor:pointer;cursor:hand;\"><p>NUEVO</p></td><td id=\"exit\"><a href= \"http://juegos.df.uba.ar/\">SALIR</a></td></tr>");
 	$("#nuevo").bind("click",function(){
 		$("#highscore").hide();	
 		new_game();

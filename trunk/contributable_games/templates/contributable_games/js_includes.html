@@ -18,6 +18,9 @@
 		},
 		'username': "{% firstof user.username '~Anonimo' %}",
 		'is_authenticated': {% if user.is_authenticated %}true{% else %}false{% endif %},
+		'is_school_player': {% if user.profile.is_school_player %}true{% else %}false{% endif %},
+		'school_gamefile': '{{ school_gamefile }}',
+		'school_end_stage': function(){$.ajax({url:'{% url school_end_stage game.name %}'})},
 		'gamefile_list': [{% for f in game_files %}'{{ f }}'{% if not forloop.last %},{% endif %}{% endfor %}],
 		'get_highscores': function(){
 			var ret;

@@ -7,7 +7,7 @@
 <!--<link rel="stylesheet" type="text/css" href="style.css" /> !-->
 <style type="text/css">
 body {
-	background-color: #7CBCD9;
+	background: url('./res/images/fondoS.jpg') repeat;
 	margin: 0px;
 	padding: 0px;
 }
@@ -15,14 +15,10 @@ a{
 	color: white;
 	text-decoration:none;
 }
-p{
-	margin:0px;
-	padding:0px;
-}
 img{
 	position: absolute;
-	top: 0px;
-	left 0px;
+	top: 2px;
+	left: 0px;
 }
 div.boton{
 	position: absolute;
@@ -113,7 +109,11 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		$($container).append("<div id=\"tarj"+ i +"\" class=\"ficha\">"+ "<img class=imgficha src=\"#\">".repeat(card_types[0].length) + " </div>");
 
 		$("#tarj"+i+"> img").each(function(j){
-			$(this).attr("src","./res/images/" + card_types[i][j] + ".gif");
+			if (card_types[i][j] == ''){
+				$(this).remove()
+			}else{
+				$(this).attr("src","./res/images/" + card_types[i][j] + ".gif");
+			}
 		});
 		$("#tarj"+i).css("left",positions[i][0]+"%")
 					.css("top",positions[i][1]+"%")

@@ -7,10 +7,10 @@ function Highscore(new_game){
 	$("#highscore").hide();	
 	$("#highscore").append("<table id=htable style=\"color:white;table-layout:fixed;width:500px; text-align:center;margin-left: auto; margin-right: auto; background-color:brown; \"><thead style=\"background-color:black\"><tr><th>AVENTURERO</th><th>BOTIN</th></tr></thead></table>");
 	for(i=0;i<10;i++){
-		$("#htable").append("<tr><td><p>...</p></td><td><p>...</p></td></tr>");
+		$("#htable").append("<tr><td><p style=\"padding:0;margin:0;\">...</p></td><td><p style=\"padding:0;margin:0;\">...</p></td></tr>");
 	}
-	$("#htable").append("<tr style=\"background-color:#E49213\"><td colspan= 2><p id=puntos>TUS PUNTOS: </p></td></tr>");
-	$("#htable").append("<tr style=\"background-color:red\"><td id=nuevo style=\"cursor:pointer;cursor:hand;\"><p>NUEVO</p></td><td id=\"exit\"><a href= \"http://localhost:8080/\">SALIR</a></td></tr>");
+	$("#htable").append("<tr style=\"background-color:#E49213\"><td colspan= 2><p style=\"padding:0;margin:0;\" id=puntos>TUS PUNTOS: </p></td></tr>");
+	$("#htable").append("<tr style=\"background-color:red\"><td id=nuevo style=\"cursor:pointer;cursor:hand;\"><p style=\"padding:0;margin:0;\" >NUEVO</p></td><td id=\"exit\"><a href= \"http://juegos.df.uba.ar/\">SALIR</a></td></tr>");
 	$("#nuevo").bind("click",function(){
 		$("#highscore").hide();	
 		new_game();
