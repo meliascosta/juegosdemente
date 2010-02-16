@@ -18,6 +18,10 @@ class Profile(User):
     siblingnumber = models.PositiveIntegerField("Hermanos en total",default=0);
     siblingorder = models.PositiveIntegerField("Tu orden (1 es el mas grande)",default=0);
     avatar = models.ImageField("tu avatar",upload_to='avatares',default='avatares/pepe.gif',height_field='80px',width_field='80px');
+    is_school_player = models.BooleanField(default=False)
+    current_stage = models.PositiveIntegerField("Etapa",default=0)
+    stage_list = models.TextField(default='')
+    last_stage_date = models.DateField(default=0)
     
 class Game(models.Model):
     name = models.SlugField(max_length=200, unique=True)

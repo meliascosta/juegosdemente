@@ -1,7 +1,10 @@
 
 function Checkpoint(trials,on_end,on_check){
-	
-	$("body").append("<div id=check-holder style=\"position: absolute; height: 3em; width: 98%; top: 0%; left: 0%;background-color:#2E81FF;-moz-border-radius:5px;\"></div>");
+	$("body").css({
+		"text-align": 'center',
+		"margin": '0 auto'
+	})
+	$("body").append("<div id=check-holder style=\"position: absolute; height: 3em; width: 98%; top: 1%; left: 0%;background-color:#2E81FF;-moz-border-radius:5px;\"></div>");
 	var IMG_URL = './res/images/checkpoints/',
 		$chdiv = $("#check-holder"),
 		trials = trials,
@@ -14,7 +17,7 @@ function Checkpoint(trials,on_end,on_check){
 		curr_checkpoint = 1,
 		fallback = 0;
 		
-	$("body").append("<div id=text class=messages style=\"position: absolute; height: 10%; width:50%;margin-left:-25%; top: 50%; left: 50%;color: #C79EE1;font-weight:bold;font-size:2em;text-align:center;border:solid;-moz-border-radius:10px;-webkit-border-radius:10px;background-color:#481369;\"><p>PEPE</p></div>")
+	$("body").append("<div id=text class=messages style=\"position: absolute;left:20%; width:60%;bottom:0; color: #C79EE1;font-weight:bold;font-size:2em;text-align:center;border:solid;-moz-border-radius:10px;-webkit-border-radius:10px;background-color:#481369;\"><p>PEPE</p></div>")
 	$("#text").hide();
 	
 	for(i=0;i<N;i++){
@@ -61,7 +64,7 @@ function Checkpoint(trials,on_end,on_check){
 	}
 	this.displaytext = function(text){
 		$("#text > p").text(text);
-		$("#text").fadeIn();
+		$("#text").slideDown();
 		setTimeout(function(){$("#text").fadeOut('fast')},3000);
 	}
 	

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from models import Game, SavedPlay, LogEntry
+from models import Game, SavedPlay, LogEntry, Profile
 from django.contrib.auth.views import logout
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, HttpResponseNotFound
 from woozp_utils.view import json_to_response
@@ -11,6 +11,7 @@ from woozp_utils.json import json_encode
 from cStringIO import StringIO
 from django.views.static import serve
 from os import path
+from datetime import date
 from django.utils.encoding import force_unicode
 
 
@@ -28,6 +29,11 @@ def game_logout(request, game_name):
 
 def serve_game_page(request, game_name, page_path):
     game = request.game
+    stages = []
+    current = 0
+    if request.user.profile.is_school_player:
+        stages = simplejson.loads(request.user.profile.stage_list)
+        current = request.user.profile.current_stage
     full_path = game.abs_pages_path+page_path
     if path.isfile(full_path):
         page = file(full_path, 'r')
@@ -41,6 +47,7 @@ def serve_game_page(request, game_name, page_path):
         'game_files': game.game_files,
         'logout_url': reverse('game_logout', args=[game_name]),
         'login_url': game.login_url,
+        'school_gamefile': stages[current]['gamefile'] if len(stages)>0 else 0
     })
     return HttpResponse(force_unicode(page.read()).replace('{{ js_includes }}', js_includes))
 
@@ -82,6 +89,13 @@ def get_score(request, game_name):
             pass #no existe el jugador
     return json_to_response(ranking)
 
+def school_end_stage(request,game_name):
+    user = get_object_or_404(Profile, username=request.user.profile.username)
+    user.last_stage_date = date.today()
+    user.current_stage = user.current_stage+1
+    user.save()
+    return json_to_response({'status':200})
+    
 def _serve_game_path(request, directory, filename):
     if not path.exists(settings.MEDIA_ROOT+directory+filename):
         raise Http404("File Not Found")

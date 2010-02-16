@@ -14,8 +14,10 @@ urlpatterns = patterns('',
         serve_game_resource, name="serve_game_static"),
     url(r'^(?P<game_name>.*)/game_file/(?P<game_file_path>.*)',
         serve_game_file, name="serve_game_file"),
+    url(r'^(?P<game_name>.*)/school_end_stage/', school_end_stage, name="school_end_stage"),
     url(r'^(?P<game_name>.*)/$', serve_game_page,
         {'page_path':'index.html'}, name="serve_game_index"),
     url(r'^(?P<game_name>.*)/(?P<page_path>.*)',
         serve_game_page, name="serve_game_page"),
+        
 )
