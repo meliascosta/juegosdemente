@@ -31,9 +31,10 @@ def serve_game_page(request, game_name, page_path):
     game = request.game
     stages = []
     current = 0
-    if request.user.profile.is_school_player:
-        stages = simplejson.loads(request.user.profile.stage_list)
-        current = request.user.profile.current_stage
+    if request.user.is_authenticated():
+		if request.user.profile.is_school_player:
+			stages = simplejson.loads(request.user.profile.stage_list)
+			current = request.user.profile.current_stage
     full_path = game.abs_pages_path+page_path
     if path.isfile(full_path):
         page = file(full_path, 'r')

@@ -17,8 +17,8 @@ a{
 }
 img{
 	position: absolute;
-	top: 2px;
-	left: 0px;
+	top:0;
+	left:0;
 }
 div.boton{
 	position: absolute;
@@ -36,14 +36,17 @@ div.boton:hover {
      background-color: red;
 }
 .ficha{
-	width: 6em;
-	margin-left:0.2em;
-	margin-top:0.2em;
-	height: 6em;
+	left:0;
+	top:0;
+	width: 100%;
+	margin-left: auto;
+	margin-top: auto;
+	height: 100%;
 	background-color: transparent;
 	position: absolute;
 }
 .imgficha{
+	
 	width: 100%;
 }
 .places{
@@ -77,7 +80,7 @@ String.prototype.repeat = function( num ) // Extend the string type to include a
     return new Array( num + 1 ).join( this );
 }
 
- if(!Array.indexOf){    // Include IndexOf in Explorer which doesn't have it
+ if(!Array.indexOf){    // Include IndexOf in Explorer that doesn't have it
       Array.prototype.indexOf = function(obj){
           for(var i=0; i<this.length; i++){
               if(this[i]==obj){
@@ -97,6 +100,7 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		$cards = [],
 		$container = $container,
 		positions = [],
+		idx = [],
 		card_types = [],
 		clicked = [];
 	
@@ -104,20 +108,21 @@ function Trial($container, on_good, on_bad,on_win_trial){
 	//SET THE CARDS AND BOARD;	
 	for (i=0;i<positions.length;i++){
 		$($container).append("<div id=\"place"+ i +"\" class=\"places\" style=\"top: "+positions[i][1]+"%; left: "+positions[i][0]+"%; \">X</div>");
+		idx[i] = i;
 	}
 	for(i=0;i<card_types.length;i++){
 		$($container).append("<div id=\"tarj"+ i +"\" class=\"ficha\">"+ "<img class=imgficha src=\"#\">".repeat(card_types[0].length) + " </div>");
-
+		
 		$("#tarj"+i+"> img").each(function(j){
-			if (card_types[i][j] == ''){
+			if (card_types[i][j]==null){
 				$(this).remove()
+				console.log('removed ',i)
 			}else{
-				$(this).attr("src","./res/images/" + card_types[i][j] + ".gif");
+				$(this).attr("src","./res/images/" + card_types[i][j] + ".png");
 			}
 		});
-		$("#tarj"+i).css("left",positions[i][0]+"%")
-					.css("top",positions[i][1]+"%")
-					.bind("click",on_click);
+		$("#tarj"+i).bind("click",on_click);
+		$("#place" +i).append($("#tarj"+i));
 					
 
 	}
@@ -126,17 +131,15 @@ function Trial($container, on_good, on_bad,on_win_trial){
 	}
 		
 	function shuffle(){
-		var new_pos = positions;
-		for (i=new_pos.length+2;i>1;i--){
-			randN = Math.floor(Math.random()*new_pos.length);
-			temp = new_pos[randN];
-			new_pos[randN] = new_pos[new_pos.length-1];
-			new_pos[new_pos.length-1] = temp;
+		for (i=idx.length+2;i>1;i--){
+			randN = Math.floor(Math.random()*idx.length);
+			temp = idx[randN];
+			idx[randN] = idx[idx.length-1];
+			idx[idx.length-1] = temp;
 		}
 		for (i=0;i<$cards.length;i++){
-			$($cards[i]).css("left",new_pos[i][0]+"%")
-					.css("top",new_pos[i][1]+"%")
-					.fadeIn(700);
+			$("#place"+idx[i]).append($cards[i]);
+			$($cards[i]).fadeIn(700);
 
 		}
 		$($cards).bind("click",on_click);
@@ -249,6 +252,7 @@ $(function(){
 		
 
 		function on_check(){
+			tries = 0;
 			soundManager.play('check');
 		}
 

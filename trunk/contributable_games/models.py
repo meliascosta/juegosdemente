@@ -21,7 +21,7 @@ class Profile(User):
     is_school_player = models.BooleanField(default=False)
     current_stage = models.PositiveIntegerField("Etapa",default=0)
     stage_list = models.TextField(default='')
-    last_stage_date = models.DateField(default=0)
+    last_stage_date = models.DateField(default='1981-10-14')
     
 class Game(models.Model):
     name = models.SlugField(max_length=200, unique=True)
