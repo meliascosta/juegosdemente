@@ -4,7 +4,7 @@ function Checkpoint(trials,on_end,on_check){
 		"text-align": 'center',
 		"margin": '0 auto'
 	})
-	$("body").append("<div id=check-holder style=\"position: absolute; height: 3em; width: 98%; top: 1%; left: 0%;background-color:#2E81FF;-moz-border-radius:5px;\"></div>");
+	$("body").append("<div id=check-holder style=\"position: absolute; height: 3em; width: 98%; top: 1%; left: 0%;background-color:#2E81FF;-moz-border-radius:5px;-webkit-border-radius:5px;\"></div>");
 	var IMG_URL = './res/images/checkpoints/',
 		$chdiv = $("#check-holder"),
 		trials = trials,
