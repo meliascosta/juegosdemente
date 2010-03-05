@@ -108,6 +108,8 @@
                 left: 50%;
                 margin-left: -25%;
                 top: 18%;
+				-moz-user-select:none;
+				-khtml-user-select: none;
             }
             
             #img-fondo {
@@ -131,7 +133,14 @@
 				padding:0px;
 				margin: 4px;
 			}
-            
+            ::-moz-selection{
+				background:transparent;
+			}
+			::selection {
+				background:transparent;
+			}
+
+
         </style>
         {{ js_includes }}
         <script type="text/javascript" src="./res/soundmanager2.js">
@@ -162,27 +171,23 @@
                 
                 var logger = $.games.new_play();
                 var current_gamefile = 0;
-                if ($.games.is_school_player) { // Check if it is the special kind of player
-                    var level = $.games.get_gamefile($.games.school_gamefile);
-                }
-                else {
-                    var level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
-                }
-                
-                var check = new Checkpoint(level.Checkpoints, on_end, on_check);
-                logger.log("game_start", {
-                    "level": level
-                });
+                var current_level = 0;
+				console.log($.games.state[0]);
+                if ($.games.state != 0){current_gamefile = $.games.state[0]; current_level = $.games.state[1]} // If player has already played set it to the correct gamefile and level
+				var level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
+                var current_trie = 0;
+                var current_trial = 0;
                 var stages = level.Levels;
                 var desired_stage = [['drag-1', 'drop-1'], ['drag-2', 'drop-2'], ['drag-3', 'drop-3']]
                 var current_moves; //Moves made in the current stage
-                var current_level = 0;
-                var current_trie = 0;
-                var current_trial = 0;
-                var scoreTable = new Highscore(new_game);
+                var scoreTable = new Highscore();
                 var score = 0;
                 var mouseX = [], mouseY = [], t = [];
-                
+                 var check = new Checkpoint(level.Checkpoints, on_end, on_check);
+                logger.log("game_start", {
+                    "level": level
+                });
+				
                 $().mousemove(function(e){
                     tempD = new Date();
                     mouseX.push(e.pageX);
@@ -197,7 +202,7 @@
                 }
                 
                 function setup_stage(stage){
-                    console.log("cur trial", current_trial, "currlevel", current_level);
+                    //console.log("cur trial", current_trial, "currlevel", current_level);
                     $.each(stage.initial_state, function(k, i){
                         $('#' + i[1]).append($('#' + i[0]))
                     })
@@ -313,12 +318,12 @@
                     }
                 }
                 function topscore(){
-                    $.games.set_score(score);
+                    $.games.set_score(score,[current_gamefile, current_level]);
                     scoreTable.showTable(score)
                 }
                 function new_game(){
-                    score = 0;
-                    check.set_at(0);
+                    score = $.games.score;
+                    check.set_at(current_level);
                     //Start draggables
                     $('.drag').draggable({
                         helper: 'clone',

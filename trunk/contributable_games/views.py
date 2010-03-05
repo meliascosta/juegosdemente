@@ -27,13 +27,11 @@ def can_upload_games_required(view):
 def index(request):
     if request.user.is_authenticated():
         if request.user.profile.is_school_player:
-            import pdb;
-            pdb.set_trace()
             if request.user.profile.last_stage_date == date.today():
                 return request_response(request,'contributable_games/yajugo.html')
-            stages = json.loads(request.user.profile.stage_list)
-            current = request.user.profile.current_stage
-            return request_response(request,'contributable_games/escuela.html',{'game':stages[current]['game']})
+            stages = json.loads(request.user.profile.school_games)
+            current = request.user.profile.current_school_game
+            return request_response(request,'contributable_games/escuela.html',{'game':stages[current]})
     grosos = top()
     return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all(),'grosos':grosos})
 
@@ -73,6 +71,7 @@ class Register(AjaxView):
             self.instance.set_password(self.cleaned_data['password'])
             self.instance.save()
             return ret
+ 
     
     def on_get_call(self, request):
         return request_response(request, self.HTML, {'form': self.Form()})
@@ -186,11 +185,10 @@ def top():
     games = Game.objects.all()
     grosos = []
     for game in games:
-        ctop = game.ranking[:2]
-        try:
-            for player in ctop:
-                if ({'name':player.get('profile').username , 'avatar': player.get('profile').avatar.url} not in grosos):
-                    grosos.append({'name':player.get('profile').username , 'avatar': player.get('profile').avatar.url})
-        except:
-            pass #Ignorar al jugador que no se registro.
+        ctop = game.ranking[:3]
+        for player in ctop:
+            if player['profile'] is None: 
+                continue
+            if ({'name':player.get('profile').username , 'avatar': player.get('profile').avatar.url} not in grosos):
+                grosos.append({'name':player.get('profile').username , 'avatar': player.get('profile').avatar.url})
     return grosos  

@@ -29,18 +29,17 @@ def game_logout(request, game_name):
 
 def serve_game_page(request, game_name, page_path):
     game = request.game
-    stages = []
-    current = 0
+    score =  0;
+    state = [];
     if request.user.is_authenticated():
-		if request.user.profile.is_school_player:
-			stages = simplejson.loads(request.user.profile.stage_list)
-			current = request.user.profile.current_stage
+        maxPlay = SavedPlay.objects.filter(profile=request.user.profile).order_by('-score')
+        score = maxPlay[0].score if len(maxPlay)>0 else 0
+        state = simplejson.loads(request.user.profile.current_state)
     full_path = game.abs_pages_path+page_path
     if path.isfile(full_path):
         page = file(full_path, 'r')
     else:
         return HttpResponseNotFound("This game doesn't have a %s page" % page_path)
-    
     js_includes = render_to_string('contributable_games/js_includes.html', {
         'SETTINGS': settings,
         'game': game,
@@ -48,7 +47,8 @@ def serve_game_page(request, game_name, page_path):
         'game_files': game.game_files,
         'logout_url': reverse('game_logout', args=[game_name]),
         'login_url': game.login_url,
-        'school_gamefile': stages[current]['gamefile'] if len(stages)>0 else 0
+        'state': state[game.name] if len(state)>0 else 0,
+        'score': score 
     })
     return HttpResponse(force_unicode(page.read()).replace('{{ js_includes }}', js_includes))
 
@@ -73,9 +73,20 @@ def log_action(request, game_name):
     return json_to_response({'status':200})
     
 def set_score(request, game_name):
+
     play = get_object_or_404(SavedPlay, pk=request.session['current_play_id_for_%s' % game_name])
-    play.score = request.GET['score']
-    play.save()
+    if request.user.is_authenticated():
+        user = get_object_or_404(Profile, username=request.user.profile.username)
+        state = simplejson.JSONDecoder().decode(user.current_state)
+        get =  simplejson.JSONDecoder().decode(request.GET)
+        state[game_name] = get['state']
+        user.current_state = simplejson.JSONEncoder.encode(state)
+        import pdb # SEGUIR ACAAAAAAAA!!!!!!!!
+        pdb.set_trace()
+        user.save()
+    if play.score < int(request.GET['score']):
+        play.score = request.GET['score']
+        play.save()
     return json_to_response({'status':200})
     
 
@@ -93,7 +104,7 @@ def get_score(request, game_name):
 def school_end_stage(request,game_name):
     user = get_object_or_404(Profile, username=request.user.profile.username)
     user.last_stage_date = date.today()
-    user.current_stage = user.current_stage+1
+    user.current_school_game = user.current_school_game+1
     user.save()
     return json_to_response({'status':200})
     
