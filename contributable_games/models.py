@@ -4,6 +4,7 @@ from django.utils.simplejson import dumps, loads
 from django.core.urlresolvers import reverse
 from django.conf import settings
 import os
+from PIL import Image
 from os import path
 
 class BigIntegerField(models.IntegerField):
@@ -16,19 +17,80 @@ class Profile(User):
     gender = models.SmallIntegerField("Sexo",choices=[(1,'hombre'),(2,'mujer')])
     handedness = models.SmallIntegerField("Mano mas habil",choices=[(1,'derecha'),(2,'izquierda'),(3,'ambas')])
     siblingnumber = models.PositiveIntegerField("Hermanos en total",default=0);
-    siblingorder = models.PositiveIntegerField("Tu orden (1 es el mas grande)",default=0);
-    avatar = models.ImageField("tu avatar",upload_to='avatares',default='avatares/pepe.gif',height_field='80px',width_field='80px');
+    siblingorder = models.PositiveIntegerField("Tu orden de hermandad (1 es el mas grande)",default=0);
+    avatar = models.ImageField("tu avatar",upload_to='avatares',default='avatares/pepe.gif');
     is_school_player = models.BooleanField(default=False)
-    current_stage = models.PositiveIntegerField("Etapa",default=0)
-    stage_list = models.TextField(default='')
-    last_stage_date = models.DateField(default='1981-10-14')
+    school_games  = models.TextField("Lista de Juegos para Escuela",default="[\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"control\",\"control\",\"control\",\"control\",\"control\",\"control\",\"control\",\"control\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\"]")
+    current_school_game = models.PositiveIntegerField(default=0); #que le toca hoy
+    current_state = models.TextField("Estado",default="[]")
+    last_session_date = models.DateField(default='1981-10-14')
+    def save(self, size=(100, 100)):
+        """
+            REQUIRES:
+                1.    'from PIL import Image'
+            
+            DOES:
+                1.    check to see if the image needs to be resized
+                2.    check how to resize the image based on its aspect ratio
+                3.    resize the image accordingly
+            
+            ABOUT:
+                based loosely on djangosnippet #688
+                http://www.djangosnippets.org/snippets/688/
+            
+            VERSIONS I'M WORKING WITH:
+                Django 1.0
+                Python 2.5.1
+            
+            BY:
+                Tanner Netterville
+                tanner@cabedge.com
+        """
+        
+        if not self.id and not self.avatar:
+            return
+        
+        super(Profile, self).save()
+        
+        pw = self.avatar.width
+        ph = self.avatar.height
+        nw = size[0]
+        nh = size[1]
+        
+        # only do this if the image needs resizing
+        if (pw, ph) != (nw, nh):
+            filename = str(self.avatar.path)
+            image = Image.open(filename)
+            pr = float(pw) / float(ph)
+            nr = float(nw) / float(nh)
+            
+            if pr > nr:
+                # photo aspect is wider than destination ratio
+                tw = int(round(nh * pr))
+                image = image.resize((tw, nh), Image.ANTIALIAS)
+                l = int(round(( tw - nw ) / 2.0))
+                image = image.crop((l, 0, l + nw, nh))
+            elif pr < nr:
+                # photo aspect is taller than destination ratio
+                th = int(round(nw / pr))
+                image = image.resize((nw, th), Image.ANTIALIAS)
+                t = int(round(( th - nh ) / 2.0))
+                print((0, t, nw, t + nh))
+                image = image.crop((0, t, nw, t + nh))
+            else:
+                # photo aspect matches the destination ratio
+                image = image.resize(size, Image.ANTIALIAS)
+                
+            image.save(filename)
+
     
 class Game(models.Model):
     name = models.SlugField(max_length=200, unique=True)
     profile = models.ForeignKey(Profile)
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    school_max_time = models.PositiveIntegerField(default=1200);
+    description = models.TextField(default='No hay')
     instructions = models.TextField(default='No hay')
     
     @property

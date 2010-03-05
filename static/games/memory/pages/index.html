@@ -36,12 +36,12 @@ div.boton:hover {
      background-color: red;
 }
 .ficha{
-	left:0;
-	top:0;
-	width: 100%;
+	left:5%;
+	top:5%;
+	width: 90%;
 	margin-left: auto;
 	margin-top: auto;
-	height: 100%;
+	height: 90%;
 	background-color: transparent;
 	position: absolute;
 }
@@ -50,16 +50,14 @@ div.boton:hover {
 	width: 100%;
 }
 .places{
-	width: 2em;
-	height: 2em;
+	width: 7em;
+	height: 7em;
 	position: absolute;
-	background-color: #777777;
-	color: white;
-	font-size: 50px;
-	text-align: center;
-	border: double;	
+	background: red;
+	border: 1em blue solid;
+	-moz-border-radius: .5em;
+	-webkit-border-radius: .5em;
 }
-
 .grid{
 	position: absolute;
 	left: 50%;
@@ -107,7 +105,7 @@ function Trial($container, on_good, on_bad,on_win_trial){
 	function set_board(){
 	//SET THE CARDS AND BOARD;	
 	for (i=0;i<positions.length;i++){
-		$($container).append("<div id=\"place"+ i +"\" class=\"places\" style=\"top: "+positions[i][1]+"%; left: "+positions[i][0]+"%; \">X</div>");
+		$($container).append("<div id=\"place"+ i +"\" class=\"places\" style=\"top: "+positions[i][1]+"%; left: "+positions[i][0]+"%; \"></div>");
 		idx[i] = i;
 	}
 	for(i=0;i<card_types.length;i++){
@@ -116,7 +114,7 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		$("#tarj"+i+"> img").each(function(j){
 			if (card_types[i][j]==null){
 				$(this).remove()
-				console.log('removed ',i)
+				//console.log('removed ',i)
 			}else{
 				$(this).attr("src","./res/images/" + card_types[i][j] + ".png");
 			}
@@ -175,6 +173,7 @@ function Trial($container, on_good, on_bad,on_win_trial){
 	
 	this.end_trial = function(){
 		$($container +">div").fadeOut('fast',function(){$($cards).remove();	$("div.places").remove();});
+		clicked = [];
 	}
 
 }
@@ -214,6 +213,10 @@ $(function(){
 		// GAME FLOW
 		function new_game(){
 			check.displaytext("Se largaaaaaa....")
+			levelN = 0;
+			orderN=0;
+			tries = 0;
+			score = 0;
 			check.set_at(0);
 			trial.newtrial(level.Levels[0].tries[0][0].Positions,level.Levels[0].tries[0][0].Card_types); // Set the first trial
 		}
@@ -278,7 +281,7 @@ $(function(){
 			orderN = 0;
 			tries = 0;
 			}
-			console.log("level:",levelN,"order:",orderN,"tries:",tries);
+			//console.log("level:",levelN,"order:",orderN,"tries:",tries);
 			check.step();
 			check.displaytext("Bien! A ver proba con este...");
 			setTimeout(function(){

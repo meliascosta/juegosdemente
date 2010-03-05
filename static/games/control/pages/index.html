@@ -166,7 +166,7 @@ function on_end(){
 		soundManager.createSound('correct','./res/sounds/correct.mp3');
 		soundManager.createSound('wrong','./res/sounds/wrong.mp3');
         soundManager.createSound('check','./res/sounds/checkpoint.mp3');
-		$(window).load(reset);
+		reset();
 		}
         
         var LEFT_KEY = 97,//a
@@ -210,8 +210,8 @@ function on_end(){
         
         function fin(puntos){
             soundManager.play('choque');
-        	$("#fin").fadeIn(6000,function(){scoreTable.showTable(puntos);});
             $.games.set_score(puntos);
+        	$("#fin").fadeIn(6000,function(){scoreTable.showTable(puntos);});
             check.displaytext('Se terminó');
             reloj.stop_global();
         }
@@ -241,7 +241,7 @@ function on_end(){
 
         function handle_response(e){
             if(e.which == RESTART_KEY){
-                reset();
+                //reset(); //Desactivado, hacia que se tilde a veces (queda el boton en el ranking)
                 return;
             }
             if((e.which != LEFT_KEY && e.which != RIGHT_KEY) || !reloj.recieve_input){
