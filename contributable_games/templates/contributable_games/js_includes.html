@@ -22,6 +22,7 @@
 		'score': {{ score }},
 		'state': [{% for s in state %} {{ s }}{% if not forloop.last %},{% endif %}{% endfor %}],
 		'school_end_stage': function(){$.ajax({url:'{% url school_end_stage game.name %}'})},
+		'school_max_time': '{{ game.school_max_time }}',
 		'gamefile_list': [{% for f in game_files %}'{{ f }}'{% if not forloop.last %},{% endif %}{% endfor %}],
 		'get_highscores': function(){
 			var ret;

@@ -13,6 +13,7 @@ from woozp_utils.view import AjaxView, request_response, json_to_response
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY
+from django.contrib.auth.views import logout
 import zipfile
 from unzip import unzip
 import tempfile
@@ -24,10 +25,14 @@ def can_upload_games_required(view):
         return view(request, *args, **kargs)
     return wrapper
 
+def main_logout(request):
+    logout(request,'/')
+    return HttpResponseRedirect('/')
+
 def index(request):
     if request.user.is_authenticated():
         if request.user.profile.is_school_player:
-            if request.user.profile.last_stage_date == date.today():
+            if request.user.profile.last_session_date == date.today():
                 return request_response(request,'contributable_games/yajugo.html')
             stages = json.loads(request.user.profile.school_games)
             current = request.user.profile.current_school_game
