@@ -24,14 +24,17 @@ def game_login(request, game_name):
     return HttpResponseRedirect(reverse('serve_game_index', args=[game_name]))
 
 def game_logout(request, game_name):
-    logout(request, reverse('serve_game_index', args=[game_name]))
-    return HttpResponseRedirect(settings.MAIN_SITE_DOMAIN + reverse('logout', urlconf="urls_main_site"))
+    request.session['LOGOUT'] = True;
+    return HttpResponseRedirect(settings.MAIN_SITE_DOMAIN)
 
 def serve_game_page(request, game_name, page_path):
     game = request.game
     score =  0;
-    state = [];
+    state = [0];
     if request.user.is_authenticated():
+        if request.user.profile.is_school_player:
+            if request.user.profile.last_session_date == date.today():
+                return HttpResponseRedirect(settings.MAIN_SITE_DOMAIN)
         maxPlay = SavedPlay.objects.filter(profile=request.user.profile).order_by('-score')
         score = maxPlay[0].score if len(maxPlay)>0 else 0
         state = simplejson.loads(request.user.profile.current_state)
@@ -45,9 +48,8 @@ def serve_game_page(request, game_name, page_path):
         'game': game,
         'user': request.user,
         'game_files': game.game_files,
-        'logout_url': reverse('game_logout', args=[game_name]),
         'login_url': game.login_url,
-        'state': state[game.name] if len(state)>0 else 0,
+        'state': state[game.name] if game.name in state else [0,0],
         'score': score 
     })
     return HttpResponse(force_unicode(page.read()).replace('{{ js_includes }}', js_includes))
@@ -73,16 +75,12 @@ def log_action(request, game_name):
     return json_to_response({'status':200})
     
 def set_score(request, game_name):
-
     play = get_object_or_404(SavedPlay, pk=request.session['current_play_id_for_%s' % game_name])
     if request.user.is_authenticated():
         user = get_object_or_404(Profile, username=request.user.profile.username)
         state = simplejson.JSONDecoder().decode(user.current_state)
-        get =  simplejson.JSONDecoder().decode(request.GET)
-        state[game_name] = get['state']
-        user.current_state = simplejson.JSONEncoder.encode(state)
-        import pdb # SEGUIR ACAAAAAAAA!!!!!!!!
-        pdb.set_trace()
+        state[game_name] = request.GET.getlist('state')
+        user.current_state = simplejson.dumps(state)
         user.save()
     if play.score < int(request.GET['score']):
         play.score = request.GET['score']
@@ -103,7 +101,7 @@ def get_score(request, game_name):
 
 def school_end_stage(request,game_name):
     user = get_object_or_404(Profile, username=request.user.profile.username)
-    user.last_stage_date = date.today()
+    user.last_session_date = date.today()
     user.current_school_game = user.current_school_game+1
     user.save()
     return json_to_response({'status':200})

@@ -22,7 +22,7 @@ class Profile(User):
     is_school_player = models.BooleanField(default=False)
     school_games  = models.TextField("Lista de Juegos para Escuela",default="[\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"planning\",\"control\",\"control\",\"control\",\"control\",\"control\",\"control\",\"control\",\"control\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\",\"memory\"]")
     current_school_game = models.PositiveIntegerField(default=0); #que le toca hoy
-    current_state = models.TextField("Estado",default="[]")
+    current_state = models.TextField("Estado",default="{}")
     last_session_date = models.DateField(default='1981-10-14')
     def save(self, size=(100, 100)):
         """

@@ -23,6 +23,7 @@ class SessionMiddleware(object):
         engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
         session_key = request.GET.get(settings.LOGIN_KEY_NAME, request.COOKIES.get(self.get_cookie_name(game)))
         request.session = engine.SessionStore(session_key)
+        
 
     def process_response(self, request, response):
         """
@@ -32,7 +33,8 @@ class SessionMiddleware(object):
         try:
             accessed = request.session.accessed
             modified = request.session.modified
-        except AttributeError:
+            logoutflag = request.session.get('LOGOUT',False)
+        except (AttributeError,KeyError):
             pass
         else:
             if accessed:
@@ -52,4 +54,7 @@ class SessionMiddleware(object):
                         expires=expires, domain=settings.SESSION_COOKIE_DOMAIN,
                         path=self.get_cookie_path(request.game),
                         secure=settings.SESSION_COOKIE_SECURE or None)
+            if logoutflag:
+                for game in Game.objects.all():
+                    response.delete_cookie(self.get_cookie_name(game),domain=settings.SESSION_COOKIE_DOMAIN)
         return response
