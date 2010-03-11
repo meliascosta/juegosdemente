@@ -27,7 +27,7 @@ def can_upload_games_required(view):
 
 def main_logout(request):
     logout(request,'/')
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(settings.GAMES_SITE_DOMAIN + 'planning/logout/')
 
 def index(request):
     if request.user.is_authenticated():
@@ -38,7 +38,7 @@ def index(request):
             current = request.user.profile.current_school_game
             return request_response(request,'contributable_games/escuela.html',{'game':stages[current]})
     grosos = top()
-    return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all(),'grosos':grosos})
+    return request_response(request, 'contributable_games/index.html',{'games': Game.objects.all(),'users':User.objects.all(),'grosos':grosos,'games_url':settings.GAMES_SITE_DOMAIN})
 
 def info(request):
     grosos = top()
@@ -171,6 +171,16 @@ def export_game(request, object_id, file_name):
         zf.write(str(os.path.join(game.abspath,f)),str(f))
     return serve(request, zf.filename, document_root='/')
     zf.close()
+
+def get_scores(request,game_name):
+    g = Game.objects.filter(name=game_name)[0]
+    ranking = []
+    for rank in g.ranking:
+        try:
+            ranking.append({'name': rank['profile'].username,'score':rank['score']})
+        except:
+            pass #no existe el jugador
+    return json_to_response(ranking)
 
 @login_required
 def login_to_game(request, game_name):

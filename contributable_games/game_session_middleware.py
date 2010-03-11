@@ -33,7 +33,7 @@ class SessionMiddleware(object):
         try:
             accessed = request.session.accessed
             modified = request.session.modified
-            logoutflag = request.session.get('LOGOUT',False)
+            logoutflag = request.session.get('logout',False)
         except (AttributeError,KeyError):
             pass
         else:
@@ -50,11 +50,13 @@ class SessionMiddleware(object):
                 # Save the session data and refresh the client cookie.
                 request.session.save()
                 response.set_cookie(self.get_cookie_name(request.game),
-                        request.session.session_key, max_age=max_age,
+                        request.session.session_key, max_age=None,
                         expires=expires, domain=settings.SESSION_COOKIE_DOMAIN,
                         path=self.get_cookie_path(request.game),
                         secure=settings.SESSION_COOKIE_SECURE or None)
             if logoutflag:
                 for game in Game.objects.all():
-                    response.delete_cookie(self.get_cookie_name(game),domain=settings.SESSION_COOKIE_DOMAIN)
+                    response.delete_cookie(self.get_cookie_name(game),path=self.get_cookie_path(game),domain=settings.SESSION_COOKIE_DOMAIN)
+                request.session['logout']=False
+                request.session.save()
         return response

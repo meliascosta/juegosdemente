@@ -4,7 +4,7 @@
         <!--<link rel="stylesheet" type="text/css" href="./res/style.css" />-->
         <style type="text/css">
             body {
-                background: url('./res/images/fondoS.jpg') repeat;
+                background: url('./res/images/fondoS0.jpg') repeat;
 				overflow: hidden;
                 font-family: Helvetica;
             }
@@ -16,11 +16,15 @@
             
             
             div.boton {
-                position: absolute;
-                top: 10%;
-                right: 10%;
+				position: absolute;
+				top: 15%;
+				right:5%;
+				-moz-border-radius: 10px;
+                -webkit-border-radius: 10px;
                 text-align: center;
+				padding:10px;
                 z-index: 5;
+				border:ridge;
                 font-weight: bold;
                 background-color: #5A8EC6;
                 color: white;
@@ -184,7 +188,7 @@
                 var scoreTable = new Highscore();
                 var score = 0;
                 var mouseX = [], mouseY = [], t = [];
-                 var check = new Checkpoint(level.Checkpoints, on_end, on_check);
+                var check = new Checkpoint(level.Checkpoints, on_end, on_check);
                 logger.log("game_start", {
                     "level": level
                 });
@@ -228,9 +232,12 @@
 								return;
                             }
                             else {
-                                check.displaytext("Copado, seguimos...");
-                                current_gamefile++;
-                                level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
+                                check.displaytext("Copado, vamos por más...");
+                                if (current_gamefile< $.games.gamefile_list.length){
+								current_gamefile++;
+								}
+								$("body").css("background","url('./res/images/fondoS"+current_gamefile+".jpg') repeat");
+								level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
                                 stages = level.Levels;
                                 $("#fondo").fadeOut();
                                 setTimeout(function(){
@@ -405,7 +412,7 @@
             </div>
         </div>
         <div id="salir" class="boton">
-            SALIR
+            VER PUNTOS
         </div>
     </body>
 </html>

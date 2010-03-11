@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block javascript %}
 {{ block.super }}
-
-	<script type="text/javascript">
+<script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/JSON.js"></script>
+<script type="text/javascript" src="{{ SETTINGS.MAIN_SITE_DOMAIN }}/static/js/highscore.js"></script>
+<script type="text/javascript">
 	$(function(){
-
-				$('a.boton').hover(
+				var ranking = new Highscore()
+				$('.boton').hover(
 					function() { $(this).addClass('ui-state-active'); }, 
 					function() { $(this).removeClass('ui-state-active'); }
 				);
@@ -20,10 +21,16 @@
 						}}
 				});
 				
+				
 				$('.dialog_link').click(function(){
 					match = this.id.match(/\d+/);
 					$('#dialog'+match).dialog('open');
 					return false;
+				});
+				
+				$('.ranking').click(function(){
+					match = this.id.match(/ranking_(\w+)/);
+					ranking.showTable('{% url index %}get_scores/'+match[1])
 				});
 
 
@@ -42,11 +49,10 @@
 		<div style="position: absolute; left: 210px; top:30px;">
 		<p>
 		<b>Descripcion: </b> {{game.description}}
-		<br/>
-		<b>Creado el: </b> {{game.created|date:"d/m/Y"}}
 		</p>
 		</div>
-		<div style="position: absolute; bottom: 7%; right:13%;"><a id="dialog_link{{ forloop.counter }}" href="#" class="ui-state-default ui-corner-all dialog_link boton">Instrucciones</a></div>
+		<div style="position: absolute; bottom: 4%; right:31%;cursor:pointer"><p style="margin:0;" id="ranking_{{ game.name }}" class="ui-state-default ui-corner-all ranking boton">Ranking</p></div>
+		<div style="position: absolute; bottom: 7%; right:13%;"><a id="dialog_link{{ forloop.counter }}" href="" class="ui-state-default ui-corner-all dialog_link boton">Instrucciones</a></div>
 		<div style="position: absolute; bottom:7%;right:3%;"><a href="{% if user.is_authenticated %}{{ game.login_url }}{% else %}{{ game.view_game_url }}{% endif %}" class="ui-state-default ui-corner-all boton">Jugar</a></div>
 		</div>
 		<div class="dialog" title="{{ game.title|upper }}" id="dialog{{ forloop.counter }}">
