@@ -176,16 +176,16 @@ class Game(models.Model):
         checked = []
         rankingU=[]
         p = 0;
-        try:
-            for e in ranking:
-                if e.profile not in checked:
+        for e in ranking:
+            try:
+                if e.profile not in checked and e.profile is not None:
+                    #import pdb
+                    #pdb.set_trace()
                     checked.append(e.profile)
                     p = p + 1;
                     rankingU.append({'profile': e.profile, 'score': e.score, 'puesto': p})
-               
-        except(AttributeError):
-            print "a"
-            
+            except:
+                pass # no consideramos al jugador anonimo
         return rankingU
         
     def create_directory_structure(self):

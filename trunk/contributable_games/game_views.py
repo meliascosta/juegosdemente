@@ -24,7 +24,7 @@ def game_login(request, game_name):
     return HttpResponseRedirect(reverse('serve_game_index', args=[game_name]))
 
 def game_logout(request, game_name):
-    request.session['LOGOUT'] = True;
+    request.session['logout'] = True;
     return HttpResponseRedirect(settings.MAIN_SITE_DOMAIN)
 
 def serve_game_page(request, game_name, page_path):
@@ -91,7 +91,6 @@ def set_score(request, game_name):
 def get_score(request, game_name):
     g = Game.objects.filter(name=game_name)[0]
     ranking = []
-   
     for rank in g.ranking:
         try:
             ranking.append({'name': rank['profile'].username,'score':rank['score']})

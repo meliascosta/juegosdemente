@@ -7,8 +7,9 @@
 <!--<link rel="stylesheet" type="text/css" href="style.css" /> !-->
 <style type="text/css">
 body {
-	background: url('./res/images/fondoS.jpg') repeat;
+	background: url('./res/images/fondoS0.jpg') repeat;
 	margin: 0px;
+	overflow:hidden;
 	padding: 0px;
 }
 a{
@@ -22,9 +23,13 @@ img{
 }
 div.boton{
 	position: absolute;
-	top: 0;
-	right: 0;
-	text-align:center;
+	top: 15%;
+	right:3%;
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    text-align: center;
+	padding:10px;
+	border:ridge;
 	z-index:5;
 	font-weight:bold;
 	background-color: #5A8EC6;
@@ -232,8 +237,9 @@ $(function(){
 		var scoreTable = new Highscore(new_game);
 		
 		function topscore(){
+			savedSCORE = score;
+			$.games.set_score(score,[gamefileN,levelN]);
 			scoreTable.showTable(savedSCORE)
-			trial.end_trial();
 		}
 		
 		function on_good(ficha){
@@ -276,8 +282,11 @@ $(function(){
 			levelN = 0;
 			orderN=0;
 			tries = 0;
+			if (gamefileN< $.games.gamefile_list.length){
 			gamefileN++;
+			}
 			$.games.set_score(score,[gamefileN,0]);
+			$("body").css("background","url('./res/images/fondoS"+gamefileN+".jpg') repeat");
 			level = $.games.get_gamefile("memory_gamefile"+gamefileN+".txt");
 			setTimeout(function(){
 				new_game();
@@ -285,13 +294,13 @@ $(function(){
 		}
 		function on_win_trial(){
 			score = score + level.Levels[levelN].num_tarj;
-			if (levelN>=level.levels_num){return}
 			orderN++;
 			if (orderN==level.Levels[levelN].orders){
 			levelN++;
 			orderN = 0;
 			tries = 0;
 			}
+			if (levelN>=level.levels_num){return}
 			if (END_SCHOOL){
 						$.games.set_score(score,[gamefileN, levelN]);
 						$.games.school_end_stage();
@@ -325,7 +334,7 @@ $(function(){
 </script>
 </head>
 <body>
-<div id="salir" class="boton">SALIR</div>
+<div id="salir" class="boton">PUNTOS</div>
 <div id="game-container">
 </div>
 </body>
