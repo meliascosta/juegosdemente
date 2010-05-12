@@ -95,11 +95,13 @@ String.prototype.repeat = function( num ) // Extend the string type to include a
   }
 
 
-function Trial($container, on_good, on_bad,on_win_trial){
+function Trial($container, on_good, on_bad,on_win_trial,on_start,on_appear){
 	
 	var on_good = on_good,
 		on_bad = on_bad,
 		on_win_trial = on_win_trial,
+		on_start = on_start,
+		on_appear = on_appear,
 		$cards = [],
 		$container = $container,
 		positions = [],
@@ -130,6 +132,7 @@ function Trial($container, on_good, on_bad,on_win_trial){
 
 	}
 	$cards = $("div.ficha");
+	on_start();
 	// END SET
 	}
 		
@@ -142,9 +145,10 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		}
 		for (i=0;i<$cards.length;i++){
 			$("#place"+idx[i]).append($cards[i]);
-			$($cards[i]).fadeIn(700);
+			$($cards[i]).fadeIn(1500);
 
 		}
+		on_appear();
 		$($cards).bind("click",on_click);
 	}
 	
@@ -173,7 +177,7 @@ function Trial($container, on_good, on_bad,on_win_trial){
 		$($container +">div").fadeOut('fast',function(){$($cards).remove();	$("div.places").remove();});
 		positions = pos.slice(0);
 		card_types = c_types.slice(0);
-		setTimeout(set_board,3000);
+		setTimeout(set_board,800);
 	}
 	
 	this.end_trial = function(){
@@ -210,7 +214,7 @@ $(function(){
 	var levelN = state[1];
 	var level = $.games.get_gamefile("memory_gamefile"+gamefileN+".txt");
 	var check = new Checkpoint(level.Checkpoints,on_end,on_check);
-	var trial = new Trial($game_container,on_good,on_bad,on_win_trial); 
+	var trial = new Trial($game_container,on_good,on_bad,on_win_trial,on_start,on_appear); 
 	logger.log("GAME_STARTED", {"time": tempD.getTime()});
 		
 
@@ -226,7 +230,8 @@ $(function(){
 		
 		// GAME FLOW
 		function new_game(){
-			console.log("state", state)
+			tempD = new Date();
+			logger.log("level_started", {"time": tempD.getTime()});
 			check.displaytext("Empieza.")
 			orderN=0;
 			tries = 0;
@@ -244,17 +249,22 @@ $(function(){
 		
 		function on_good(ficha){
 			soundManager.play('bien');
-			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries":tries, "ficha": ficha});
+			tempD = new Date();
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "time": tempD.getTime(),  "ficha": ficha});
+			mouseX = []; mouseY=[];t=[];
 		}
 		
 		function on_bad(ficha){
+			logger.log("end_trial",{"good":0 ,"level": levelN ,"order": orderN,"tries":tries});
 			score = score - Math.floor(level.Levels[levelN].num_tarj/3);
 			tries++;
 			if (tries > level.Levels[levelN].num_tries){
 				tries = 0;
 			}
 			soundManager.play('mal');
-			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "rtime": t[t.length-1], "level": levelN ,"order": orderN,"tries": tries, "ficha": ficha});
+			tempD = new Date();			
+			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "time": tempD.getTime(),  "ficha": ficha});
+			mouseX = []; mouseY=[];t=[];
 			if (tries==2){
 				tries =0;
 				orderN = 0;
@@ -267,17 +277,26 @@ $(function(){
 			trial.newtrial(level.Levels[levelN].tries[tries][orderN].Positions,level.Levels[levelN].tries[tries][orderN].Card_types);
 		}
 		
-
+	
 		function on_check(){
 			tries = 0;
 			$.games.set_score(score,[gamefileN,levelN]);
 			savedSCORE = score;
 			soundManager.play('check');
 		}
-
+		
+		function on_start(){
+			tempD = new Date();	
+			logger.log("start_trial", {"time": tempD.getTime(),"cards":level.Levels[levelN].tries[tries][orderN].Card_types,"positions":level.Levels[levelN].tries[tries][orderN].Positions,"to_check": level.Levels[levelN].tries[tries].length-orderN})
+		}
+		function on_appear(){
+			tempD = new Date();	
+			logger.log("cards_appear", {"time": tempD.getTime()})
+		}
+		
 		function on_end(){
-			logger.log("end_trial",{});
-			logger.log("end_game",{});
+			tempD = new Date();	
+			logger.log("level_ended", {"time": tempD.getTime(),"good":1});
 			check.displaytext("¡MUY BIEN! Vamos por más.");
 			levelN = 0;
 			orderN=0;
@@ -293,6 +312,7 @@ $(function(){
 			},1500)
 		}
 		function on_win_trial(){
+			logger.log("end_trial",{"good":1,"level": levelN ,"order": orderN,"tries":tries,"time": tempD.getTime()});
 			score = score + level.Levels[levelN].num_tarj;
 			orderN++;
 			if (orderN==level.Levels[levelN].orders){

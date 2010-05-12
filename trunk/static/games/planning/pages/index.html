@@ -215,7 +215,15 @@
                     current_moves = 0
                     mov = get_stage().show_moves ? get_stage().good_moves : '?';
                     $("#info > p").text('Movidas mínimas: ' + mov);
+					logger.log("start_trial",{"stage":get_stage(),
+					    					"max_moves": get_stage().loose_moves,
+											"min_moves": get_stage().good_moves,
+											"show_moves": get_stage().show_moves,
+											"to_check": (3 - current_trial),
+											"errors": current_trie
+					})
                 }
+				
                 function next_stage(){
                     if (current_trial == stages[current_level][current_trie].length) {
                         current_level++;
@@ -252,6 +260,7 @@
                 }
                 
                 function win(){
+                    logger.log("end_trial",{"good":1});
                     soundManager.play('check');
                     if (current_moves <= get_stage().good_moves) {
                         check.displaytext('¡Bien, ganaste en ' + current_moves + ' movidas!')
@@ -277,6 +286,7 @@
                 }
                 
                 function loose(){
+                    logger.log("end_trial",{"good":0});
                     soundManager.play('mal');
                     current_trie++;
                     check.displaytext('¡Uy, fueron demasiadas!')
@@ -305,24 +315,36 @@
                 }
                 
                 function on_drop(ev, ui){
-                    logger.log("good_drop", {
-                        "mouseX": mouseX,
-                        "mouseY": mouseY,
-                        "t": t,
-                        "moves": current_moves,
-                        "max_moves": get_stage().loose_moves
-                    })
+                    
                     mouseX = [];
                     mouseY = [];
                     t = [];
-                    current_moves++
+                    current_moves++;
                     soundManager.play('soltar_bien');
-                    $(this).append($(ui.draggable)) //move the player
-                    var won = true
+                    $(this).append($(ui.draggable)); //move the player
+                    var won = true;
+                    var temp_stage = [];
+					for (i=1;i<=4;i++){
+						x = $("#drop-"+i).contents();
+						if (x[1]==undefined){
+							temp_stage[i-1] = 'empty';
+						}else{
+							temp_stage[i-1] = x[1].id;
+						}
+					}
+
+					logger.log("drop", {
+                        "mouseX": mouseX,
+                        "mouseY": mouseY,
+						"moves": current_moves,
+                        "t": t,
+						"state":temp_stage,
+						})
+						
                     for (i in desired_stage) { // Check if the desired stage was reached
-                        if ($('#' + desired_stage[i][1]).find('#' + desired_stage[i][0]).length == 0) {
-                            won = false
-                            break
+                        if ($('#' + desired_stage[i][1]).find('#' + desired_stage[i][0]).length == 0){
+                            won = false;
+							break;
                         }
                     }
                     if (won) {

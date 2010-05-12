@@ -177,6 +177,7 @@ function on_end(){
             $flecha = $('div#flecha'),
             iteracion_reloj = 0,
 			END_SCHOOL=0,
+			tempD = new Date(),
             logger = $.games.new_play(),
 			level = $.games.get_gamefile("control_gamefile0.txt"),
             reloj = new TimeKeeper($('div#reloj')),
@@ -193,13 +194,15 @@ function on_end(){
             $("#flecha > img").not('#img-'+ arrow.kind +'_'+ arrow.orientacion).hide();
             var reloj_intertrial = setTimeout(function(){
                 $flecha.css("left", arrow.posicion + "%" ).show();
-                logger.log("presentaFlecha", {"flecha":arrow});
+				tempD = new Date();
+                logger.log("presentaFlecha", {"flecha":arrow,"time":tempD.getTime()});
                 set_juez('transparent');
                 reloj.start_trial(arrow.time,function(){
                         set_juez('#C52338');
                         check.fallback();
                         soundManager.play('wrong');
-                        logger.log("timeOut");
+						tempD = new Date();
+                        logger.log("timeOut",{"time":tempD.getTime()});
                         if (!current_game.next_arrow_wrong()){
                             fin(current_game.get_puntaje().puntos);
                             return;
@@ -241,7 +244,7 @@ function on_end(){
             check.set_at(0);
             current_game.reset();
             reloj.reset(160000,$("div#tiempo_total"),function(){
-                logger.log("finJuego",{"puntaje": current_game.get_puntaje().puntos});
+                logger.log("finJuego",{"puntaje": current_game.get_puntaje().puntos,"time":tempD.getTime()});
                 fin(current_game.get_puntaje().puntos);
                 });
             setTimeout(function(){
@@ -270,7 +273,8 @@ function on_end(){
                 soundManager.play('correct');
                 var next = current_game.next_arrow_correct();
                 puntaje = current_game.get_puntaje();
-                logger.log("respuestaCorrecta", {"puntos": puntaje.puntos,"dist_to_checkpoint":arrow.to_checkpoint});
+				tempD = new Date();
+                logger.log("respuestaCorrecta", {"puntos": puntaje.puntos,"dist_to_checkpoint":arrow.to_checkpoint,"time":tempD.getTime()});
                 set_juez('#729D1B');
                 check.step();
                if(!next){
@@ -282,7 +286,8 @@ function on_end(){
                 soundManager.play('wrong');
                 var next = current_game.next_arrow_wrong();
                 puntaje = current_game.get_puntaje();
-                logger.log("respuestaIncorrecta", {"puntos": puntaje.puntos,"dist_to_checkpoint":arrow.to_checkpoint});
+				tempD = new Date();
+                logger.log("respuestaIncorrecta", {"puntos": puntaje.puntos,"dist_to_checkpoint":arrow.to_checkpoint,"time":tempD.getTime()});
                 set_juez('#C52338');
                 if (!next){
                     fin(puntaje.puntos);
