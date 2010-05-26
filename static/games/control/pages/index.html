@@ -179,7 +179,7 @@ function on_end(){
 			END_SCHOOL=0,
 			tempD = new Date(),
             logger = $.games.new_play(),
-			level = $.games.get_gamefile("control_gamefile0.txt"),
+			level = $.games.get_gamefile("control_gamefile"+Math.floor(Math.random()*7)+".txt"),
             reloj = new TimeKeeper($('div#reloj')),
             current_game= new ControlGame(level.game),
             check = new Checkpoint(level.Checkpoints,on_end,on_check),
@@ -226,6 +226,8 @@ function on_end(){
         }
 
         function reset(){
+			level = $.games.get_gamefile("control_gamefile"+Math.floor(Math.random()*7)+".txt");
+			current_game= new ControlGame(level.game);
 			if (END_SCHOOL){
 						$.games.set_score(current_game.get_puntaje().puntos,[0,0]);
 						$.games.school_end_stage();
@@ -243,7 +245,7 @@ function on_end(){
             check.displaytext('Se larga...')
             check.set_at(0);
             current_game.reset();
-            reloj.reset(160000,$("div#tiempo_total"),function(){
+            reloj.reset(240000,$("div#tiempo_total"),function(){
                 logger.log("finJuego",{"puntaje": current_game.get_puntaje().puntos,"time":tempD.getTime()});
                 fin(current_game.get_puntaje().puntos);
                 });
