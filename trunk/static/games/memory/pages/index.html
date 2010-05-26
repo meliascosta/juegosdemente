@@ -212,7 +212,12 @@ $(function(){
 			}
 	var gamefileN = state[0];
 	var levelN = state[1];
-	var level = $.games.get_gamefile("memory_gamefile"+gamefileN+".txt");
+	if ($.games.is_shool_player){
+		var level = $.games.get_gamefile("memory_gamefile"+gamefileN+".txt");
+	}else{
+		var letra = ['','b','c']
+		var level = $.games.get_gamefile("memory_gamefile"+gamefileN+letra[Math.floor(Math.random()*3)]+".txt");
+	}
 	var check = new Checkpoint(level.Checkpoints,on_end,on_check);
 	var trial = new Trial($game_container,on_good,on_bad,on_win_trial,on_start,on_appear); 
 	logger.log("GAME_STARTED", {"time": tempD.getTime()});
