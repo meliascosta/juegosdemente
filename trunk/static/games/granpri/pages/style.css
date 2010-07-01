@@ -1,0 +1,74 @@
+
+body{
+	background: url(./res/images/fondo.jpg) repeat;
+}
+#game-container{
+	cursor: url(./res/images/auto2.gif),auto;
+	background-color:black;
+	position:absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -300px;
+	margin-top: -175px;
+}
+#gameArea{
+	visibility:hidden;
+}
+#temp{
+	position:relative;
+	float:left;
+	visibility:hidden;
+}
+#autofuera{
+	position: absolute;
+	visibility:hidden;
+}
+#semaforo{
+	position:absolute;
+	background-color: black;
+	top: 220px;
+	left: 350px;
+	width: 40px;
+	height: 20px;
+}
+#llegada{
+	position:absolute;
+	font-size: 10px;
+	color: white;
+	background-color: blue;
+	top: 220px;
+	left: 170px;
+	width: 40px;
+	height: 20px;
+}
+#puntos{
+	position:absolute;
+	font-size: 20px;
+	color: white;
+	background-color: transparentº;
+	top: 20%;
+	left: 10%;
+	width: 90%;
+	height: 20%;
+}
+#bandera{
+	position:absolute;
+	top: 40%;
+	left: 10%;
+	width: 10%;
+	height: 10%;
+	background-color:transparent;
+}
+#tmax{
+	position:absolute;
+	font-size: 20px;
+	background-color: transparent;
+	top: 30%;
+	left: 80%;
+	width: 10%
+	height: 20%;
+}
+img{
+	position:absolute;
+}
+

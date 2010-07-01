@@ -260,7 +260,7 @@ $(function(){
 		}
 		
 		function on_bad(ficha){
-			logger.log("end_trial",{"good":0 ,"level": levelN ,"order": orderN,"tries":tries});
+			logger.log("end_trial",{"good":0 ,"level": levelN ,"order": orderN,"tries":tries,"time": tempD.getTime()});
 			score = score - Math.floor(level.Levels[levelN].num_tarj/3);
 			tries++;
 			if (tries > level.Levels[levelN].num_tries){
