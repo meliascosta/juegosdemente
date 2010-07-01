@@ -251,6 +251,7 @@ function on_end(){
                 });
             setTimeout(function(){
                 $("#inicio").hide();
+                logger.log("inicioJuego",{"time":tempD.getTime()});
                 presentar_flecha();
             },6000);
         }
