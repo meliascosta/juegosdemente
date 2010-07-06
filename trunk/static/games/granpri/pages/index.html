@@ -130,11 +130,14 @@
 	//gameflow functions
 	
 	function largada(){
-		$("#semaforo").css('background-color','red')
+		var ims = $("#semaforo > img");
+		$(ims[1]).hide()
+		$(ims[2]).hide()
+		$("#semaforo").show();
 		$("#puntos").text('En sus marcas.')
-		c1 = setTimeout(function(){$("#semaforo").css('background-color','yellow');$("#puntos").text('Listos...')},2000);
+		c1 = setTimeout(function(){$(ims[1]).show();$("#puntos").text('Listos...')},2000);
 		c2 = setTimeout(function(){
-			$("#semaforo").css('background-color','green');
+			$(ims[2]).show();
 			$("#llegada").hide();
 			$("#gameArea").css('visibility','visible');
 			$("#game-container").unbind('mousemove',on_mousemove_boxes);
@@ -152,12 +155,12 @@
 		en_pista = [];
 		startFlag=-1;
 		$("#llegada").css('background-color','blue');
-		$("#semaforo").css('background-color','black');
 		$("#game-container").unbind('mousemove',on_mousemove_carrera);
 		$("#game-container").bind('mousemove',on_mousemove_boxes);	
 	}
 	function show_puntos(){
 		$("#game-container").unbind('mousemove',on_mousemove_carrera);
+		$("#semaforo").hide();
 		$("#gameArea").css('visibility','hidden');
 		var timeTot = Math.round(time[time.length-1]-time[0])/1000;
 		var penalizacion = 0;
@@ -211,7 +214,11 @@
 <body>
 <div id="game-container" height = "600" width="450"> 
 <canvas id="gameArea" width="600" height="450"></canvas>
-<div id="semaforo"></div>
+<div id="semaforo">
+<img style="height:100%;left:0;" src="./res/images/semaforo1.png">
+<img style="height:100%;left:0;" src="./res/images/semaforo2.png">
+<img style="height:100%;left:0;" src="./res/images/semaforo3.png">
+</div>
 <div id="llegada">largada</div>
 <div id="puntos">Corredores a la largada... </div>
 <div id="bandera"><img style= "left: 0; width:100%" src='./res/images/bandera.png'></div>
