@@ -25,11 +25,12 @@ body{
 }
 #semaforo{
 	position:absolute;
-	background-color: black;
-	top: 220px;
-	left: 350px;
-	width: 40px;
-	height: 20px;
+	top: 170px;
+	left: 340px;
+	width: 50px;
+	height: 100px;
+	display:none;
+	background-color: transparent;
 }
 #llegada{
 	position:absolute;
