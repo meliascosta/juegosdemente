@@ -24,7 +24,11 @@
 	CHEIGHT=450,
 	xpos = new Array(),
 	ypos = new Array(),
-	tmax = 15;
+	tmax = 15,
+	logger = $.games.new_play(),
+	scoreTable = new Highscore(resume),
+	score = 0,
+	errores = 0,
 	en_pista= new Array(),
 	time = new Array(),
 	clock = 0,
@@ -173,6 +177,14 @@
 		$("#puntos").show();
 		if (timeTot+penalizacion<tmax){
 			check.step();
+			score = score + 1 + 0.5*(tmax - timeTot - penalizacion);
+		}else{
+			errores = errores + 1;
+			if (errores >= 3){
+				errores = 0;
+				score = score - 10;
+				check.fallback();
+			}
 		}
 		setTimeout(function(){
 			$("#puntos").text('Corredores a la largada...');
@@ -184,20 +196,34 @@
 		setTimeout(function(){
 			$("#tmax").text('Tiempo max: '+ tmax.toFixed(3) + 's')
 			$("#llegada").show();
-			generate_track([4,1,2,0],[1,2,4,2]);
+			var interior = new Array(4);
+			var exterior = new Array(4);
+			for (i =0;i<=4;i++){
+				interior[i] = Math.round(Math.random()*4);
+				exterior[i] = Math.round(Math.random()*4);
+			}
+			generate_track(interior,exterior);
+			logger.log("newTrack",{"interior":interior, "exterior":exterior})
 			comienzo();	
 		},1000);
 		
 	}
+	
 	function on_end(){}
+	
+	function resume(){
+		scoreTable.hideTable();	
+	}
 	function on_check(){
 		tmax =  tmax - 15/40;
+		$.games.set_score(Math.round(score*100),[0,0]);
+		scoreTable.showTable(Math.round(score*100))
 	}
 	
 	
-	//gameflow
+	//startUp
 	$("#bandera").slideUp();
-	comienzo()
+	nueva_pista()
 	
 	
        
