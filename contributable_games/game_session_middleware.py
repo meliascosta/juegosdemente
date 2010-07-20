@@ -59,4 +59,5 @@ class SessionMiddleware(object):
                     response.delete_cookie(self.get_cookie_name(game),path=self.get_cookie_path(game),domain=settings.SESSION_COOKIE_DOMAIN)
                 request.session['logout']=False
                 request.session.save()
+                request.session['LOGOUT']=False
         return response
