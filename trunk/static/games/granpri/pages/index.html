@@ -32,6 +32,7 @@
 	en_pista= new Array(),
 	time = new Array(),
 	clock = 0,
+    clockwiseFlag= 0,
 	startFlag=-1,
 	t = new Date(),
 	pixels = new Array(CWIDTH*CHEIGHT*4),
@@ -105,24 +106,29 @@
 		time.push(t.getTime());
 		xpos.push(e.layerX);
 		ypos.push(e.layerX);
-		en_pista.push(pixels[CWIDTH*(e.layerY+10)*4+(e.layerX+20)*4]==255);
+		en_pista.push((pixels[CWIDTH*(e.layerY+10)*4+(e.layerX+20)*4]==255)*1);
 		
 		//puntos de paso
-		if (e.layerX>155 &e.layerX<190 &e.layerY>207 &e.layerY<240)
+		//if (e.layerX>155 &e.layerX<190 &e.layerY>207 &e.layerY<240)
+		//	pPaso = pPaso|1
+		
+        if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80&clockwiseFlag)
 			pPaso = pPaso|1
-		if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80)
+	    if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80& (pPaso&2)>0)
+			pPaso = pPaso|1
+	   	if (e.layerX>520 &e.layerX<590 &e.layerY>200 &e.layerY<260)
 			pPaso = pPaso|2
-		if (e.layerX>520 &e.layerX<590 &e.layerY>200 &e.layerY<260)
+		if (e.layerX>350 &e.layerX<410 &e.layerY>380 &e.layerY<440& !clockwiseFlag)
 			pPaso = pPaso|4
-		if (e.layerX>350 &e.layerX<410 &e.layerY>380 &e.layerY<440)
-			pPaso = pPaso|8
-			
+		if (e.layerX>350 &e.layerX<410 &e.layerY>380 &e.layerY<440& (pPaso&2)>0)
+			pPaso = pPaso|4
+        console.log(pPaso);
 		if (en_pista[en_pista.length-1]){
 			$("#game-container").css('cursor','url(./res/images/auto2.gif),auto');
 		}else{
 			$("#game-container").css('cursor','url(./res/images/autofuera2.gif),auto');
 		}
-		if (e.layerX>165 &e.layerX<180 &e.layerY>217 &e.layerY<230&pPaso ==15){
+		if (e.layerX>165 &e.layerX<180 &e.layerY>217 &e.layerY<230&pPaso ==7){
 			$("#bandera").slideDown(250);
 			pPaso = 0;
 			setTimeout(show_puntos,1000);
@@ -186,6 +192,7 @@
 				check.fallback();
 			}
 		}
+        logger.log("raceEnd",{"xpos":xpos, "ypos":ypos,"time":time,"en_pista":en_pista,"score":score,"tmax":tmax,"timeTot":timeTot, "penalizacion":penalizacion.toFixed(3),"win":(timeTot+penalizacion<tmax)})
 		setTimeout(function(){
 			$("#puntos").text('Corredores a la largada...');
 			$("#bandera").slideUp(250);
@@ -198,12 +205,14 @@
 			$("#llegada").show();
 			var interior = new Array(4);
 			var exterior = new Array(4);
-			for (i =0;i<=4;i++){
+			for (i =0;i<4;i++){
 				interior[i] = Math.round(Math.random()*4);
 				exterior[i] = Math.round(Math.random()*4);
 			}
+            clockwiseFlag = Math.random()>0.5;
+            alert(clockwiseFlag);
 			generate_track(interior,exterior);
-			logger.log("newTrack",{"interior":interior, "exterior":exterior})
+			logger.log("newTrack",{"interior":interior, "exterior":exterior,"clockwise" : clockwiseFlag})
 			comienzo();	
 		},1000);
 		
