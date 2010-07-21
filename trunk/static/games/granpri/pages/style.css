@@ -73,3 +73,29 @@ img{
 	position:absolute;
 }
 
+#banderin0{
+	top: 0%;
+	left: 60%;
+	display: none;
+}
+
+#banderin1{
+	top: 48%;
+	left: 95%;
+	display: none;
+}
+
+#banderin2{
+	top: 80%;
+	left: 60%;
+	display: none;
+}
+div#flecha{
+	position: absolute;
+	display:none;
+	height: 40%;
+	width: 15%;
+ 	top: 30%;
+	left: 10%;
+}
+
