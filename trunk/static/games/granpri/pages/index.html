@@ -159,7 +159,7 @@
 		}else{
 			$("#game-container").css('cursor','url(./res/images/autofuera2.gif),auto');
 		}
-		if (e.layerX>165 &e.layerX<180 &e.layerY>217 &e.layerY<230&pPaso ==7){
+		if (e.layerX>160 &e.layerX<185 &e.layerY>217 &e.layerY<230&pPaso ==7){
 			$("#bandera").slideDown(250);
 			pPaso = 0;
 			setTimeout(show_puntos,1000);
@@ -263,6 +263,12 @@
 	
 	function on_end(){
 		level++;
+		tmax =  tmax - 15/40;
+		checknum++; 
+		$.games.set_score(Math.round(score*100),[level,checknum]);
+		scoreTable.showTable(Math.round(score*100))
+		setTimeout(function(){check.set_at(0);},1000);
+		check.displaytext('Groso. A ver ahora...')
 		$("body").css("background","url('./res/images/fondoS"+level+".jpg') repeat");
 	}
 	
@@ -279,7 +285,8 @@
 	
 	//startUp
 	$("#bandera").slideUp();
-	check.set_at(checknum);
+	check.set_at(checknum%5);
+	tmax = tmax - 15/40 * checknum;
 	$("body").css("background","url('./res/images/fondoS"+level+".jpg') repeat");
 	
        
