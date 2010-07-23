@@ -75,6 +75,7 @@ div.boton:hover {
 <script type="text/javascript" src="./res/soundmanager2-nodebug-jsmin.js"></script>
 <script type="text/javascript" src="./res/checkpoint.js"></script>
 <script type="text/javascript" src="./res/highscore.js"></script>
+<script type="text/javascript" src="./res/video_player.js"></script>
 <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
 <script type="text/javascript">
 
@@ -153,6 +154,7 @@ function Trial($container, on_good, on_bad,on_win_trial,on_start,on_appear){
 	}
 	
 	function on_click(){
+		
 		numTarj = $(this).attr("id").match(/\d+/);
 		$($cards).unbind("click");
 		if (clicked.indexOf(this) == -1){
@@ -204,6 +206,7 @@ $(function(){
 			savedSCORE = 0,
 			tempD = new Date(),
 			logger = $.games.new_play(),
+			player = new videoPlayer();
 			state = [0,0];
 			if ($.games.is_school_player){setTimeout(function(){END_SCHOOL = 1},$.games.school_max_time*1000)}
 			if ($.games.is_authenticated){
@@ -253,6 +256,7 @@ $(function(){
 		}
 		
 		function on_good(ficha){
+			player.play();
 			soundManager.play('bien');
 			tempD = new Date();
 			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 1, "time": tempD.getTime(),  "ficha": ficha});

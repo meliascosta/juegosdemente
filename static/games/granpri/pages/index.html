@@ -30,6 +30,7 @@
 	scoreTable = new Highscore(resume),
 	score = 0,
 	checknum = 0,
+	to_check = 5,
 	level = 0,
 	errores = 0,
 	en_pista= new Array(),
@@ -144,7 +145,7 @@
 		en_pista.push((pixels[CWIDTH*(e.layerY+10)*4+(e.layerX+20)*4]==255)*1);
 		
 		//puntos de paso
-	       	if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80&clockwiseFlag)
+	    if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80&clockwiseFlag)
 			show_paso(1);
 	   	if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80& (pPaso&2)>0)
 			show_paso(1)
@@ -220,6 +221,7 @@
 		$("#puntos").show();
 		if (timeTot+penalizacion<tmax){
 			check.step();
+			to_check--;
 			soundManager.play('win');
 			score = score + 1 + 0.5*(tmax - timeTot - penalizacion);
 		}else{
@@ -229,6 +231,7 @@
 				errores = 0;
 				score = score - 10;
 				check.fallback();
+				logger.log('fallBack',{'score':score})
 			}
 		}
         logger.log("raceEnd",{"xpos":xpos, "ypos":ypos,"time":time,"en_pista":en_pista,"score":score,"tmax":tmax,"timeTot":timeTot, "penalizacion":penalizacion.toFixed(3),"win":(timeTot+penalizacion<tmax)})
@@ -255,7 +258,7 @@
 			$("#flecha_"+clockwiseFlag*1).hide();
 			$("#flecha").show();
 			generate_track(interior,exterior);
-			logger.log("newTrack",{"interior":interior, "exterior":exterior,"clockwise" : clockwiseFlag})
+			logger.log("newTrack",{"interior":interior, "exterior":exterior,"clockwise" : clockwiseFlag, 'tmax':tmax.toFixed(3),'to_check':to_check,'checknum':checknum,'level':level,'errores':errores})
 			comienzo();	
 		},1000);
 		
@@ -277,7 +280,8 @@
 	}
 	function on_check(){
 		tmax =  tmax - 15/40;
-		checknum++; 
+		checknum++;
+		to_check = 5; 
 		$.games.set_score(Math.round(score*100),[level,checknum]);
 		scoreTable.showTable(Math.round(score*100))
 	}
