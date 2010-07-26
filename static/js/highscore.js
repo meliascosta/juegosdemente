@@ -31,14 +31,24 @@ function Highscore(url){
 	$("#exit").click(function(){$("#highscore").hide();	})
 	this.showTable = function(ranking_url){ // Show the Highscores table
 		var scores = get_high_scores(ranking_url);
-		for ( i=0;i<scores.length;i++){
-				$("#htable td:even:eq("+i+") p").text(scores[i].name)
-											.css("background-color","#9B8677");
+		for ( i=0;i<10;i++){
+		    if (i<scores.length){
+   				$("#htable td:even:eq("+i+") p").text(scores[i].name)
+						.css("background-color","#9B8677");
 
 				$("#htable td:odd:eq("+i+") p").text(scores[i].score+" keV")
-											.css("background-color","white")
-											.css("color","black");
-			}			
+						.css("background-color","white")
+						.css("color","black");
+		    }else{
+   				$("#htable td:even:eq("+i+") p").text('...')
+						.css("background-color","transparent");
+
+				$("#htable td:odd:eq("+i+") p").text("...")
+						.css("background-color","transparent")
+						.css("color","white");
+		    
+		    }
+		}			
 		$("#highscore").fadeIn();		
 		
 	}

@@ -27,7 +27,7 @@ def can_upload_games_required(view):
 
 def main_logout(request):
     logout(request,'/')
-    return HttpResponseRedirect(settings.GAMES_SITE_DOMAIN + 'planning/logout/')
+    return HttpResponseRedirect(settings.GAMES_SITE_DOMAIN + 'Planning/logout/')
 
 def index(request):
     if request.user.is_authenticated():
