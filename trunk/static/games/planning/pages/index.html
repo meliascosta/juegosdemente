@@ -176,7 +176,7 @@
                 var logger = $.games.new_play();
                 var current_gamefile = 0;
                 var current_level = 0;
-				console.log($.games.state);
+				//console.log($.games.state);
                 if ($.games.state != 0){current_gamefile = $.games.state[0]; current_level = $.games.state[1]} // If player has already played set it to the correct gamefile and level
 				$("body").css("background","url('./res/images/fondoS"+current_gamefile+".jpg') repeat");
 				var level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
