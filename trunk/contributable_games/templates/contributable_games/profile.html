@@ -5,7 +5,7 @@
 <h1>Hola {{ user.username }}</h1>
 <img src="{{ user.profile.avatar.url }}" style="width:10%; float: left; margin:3%">
 <div style="float:left; margin-left: 5%">
-
+Quiero ir a <a href="{% url index %}">Jugar</a>
 {% if user.profile.can_upload_games %}
 
 	<a href="{% url create_game %}">Crear un juego nuevo</a>

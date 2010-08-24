@@ -17,6 +17,7 @@
 			$.ajax({url:'{% url set_score game.name %}', dataType: "json",data:{'score':score,'state':state}});
 		},
 		'username': "{% firstof user.username '~Anonimo' %}",
+		'main_site': "{{ SETTINGS.MAIN_SITE_DOMAIN }}",
 		'is_authenticated': {% if user.is_authenticated %}true{% else %}false{% endif %},
 		'is_school_player': {% if user.profile.is_school_player %}true{% else %}false{% endif %},
 		'score': {{ score }},

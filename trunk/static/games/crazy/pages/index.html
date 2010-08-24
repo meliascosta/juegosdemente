@@ -17,6 +17,18 @@ body{
 	margin-top: -200px;
 }
 </style>
+<script type="text/javascript">
+	if ($.games.is_school_player){
+		setTimeout(function(){
+			$.games.school_end_stage();
+			check.displaytext('Eso fue todo por hoy...')
+			setTimeout(function(){
+        	window.location = $.games.main_site;
+        	}, 3500);
+		},$.games.school_max_time*1000);
+	}
+			
+</script>
 </head>
 <body>
 <div id=game-area>

@@ -38,6 +38,7 @@
 	clock = 0,
     clockwiseFlag= 0,
 	startFlag=-1,
+	END_SCHOOL = 0,
 	t = new Date(),
 	pixels = new Array(CWIDTH*CHEIGHT*4),
 	ctx = $("#gameArea").get(0).getContext('2d'),
@@ -56,7 +57,7 @@
 	   generate_track([0,1,2,3],[1,2,3,4])
 	   
     }
-
+	if ($.games.is_school_player){setTimeout(function(){END_SCHOOL = 1},$.games.school_max_time*1000)}
 	if ($.games.is_authenticated){
 		state = $.games.state;
 		level = state[0];
@@ -235,6 +236,15 @@
 			}
 		}
         logger.log("raceEnd",{"xpos":xpos, "ypos":ypos,"time":time,"en_pista":en_pista,"score":score,"tmax":tmax,"timeTot":timeTot, "penalizacion":penalizacion.toFixed(3),"win":(timeTot+penalizacion<tmax)})
+		if (END_SCHOOL){
+			$.games.set_score(current_game.get_puntaje().puntos,[0,0]);
+			$.games.school_end_stage();
+			check.displaytext('Eso fue todo por hoy...')
+			setTimeout(function(){
+            	window.location = $.games.main_site;
+        	}, 3500);
+			return
+		}
 		setTimeout(function(){
 			$("#puntos").text('Corredores a la largada...');
 			$("#bandera").slideUp(250);
