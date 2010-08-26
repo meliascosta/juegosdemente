@@ -230,23 +230,15 @@
                         current_level++;
                         current_trial = 0;
                         current_trie = 0;
+			}
                         if (current_level == stages.length) {
                             logger.log("fase_end", {});
-                            if ($.games.is_school_player) {
-								check.displaytext("Eso es todo por hoy...");
-                                $.games.school_end_stage();
-								setTimeout(function(){
-                                window.location.replace($.games.main_site)
-								},5000);
-								return;
-                            }
-                            else {
                                 check.displaytext("Copado, vamos por más...");
                                 if (current_gamefile< $.games.gamefile_list.length){
 								current_gamefile++;
 								}
-								$("body").css("background","url('./res/images/fondoS"+current_gamefile+".jpg') repeat");
-								level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
+				$("body").css("background","url('./res/images/fondoS"+current_gamefile+".jpg') repeat");
+				level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
                                 stages = level.Levels;
                                 $("#fondo").fadeOut();
                                 setTimeout(function(){
@@ -254,8 +246,7 @@
                                 }, 3000)
                                 check.set_at(0);
                                 current_level = 0;
-                            }
-                        }
+                          
                     }
                     setup_stage(get_stage())
                 }
@@ -277,7 +268,7 @@
 						$.games.school_end_stage();
 						check.displaytext('Eso fue todo por hoy...')
 						setTimeout(function(){
-                        	window.location = "http://juegos.df.uba.ar"
+                        	window.location = $.games.main_site;
                     	}, 3500);
 						return
 					}
@@ -387,7 +378,10 @@
                         drop: on_drop,
                         tolerance: 'touch'
                     })
-                    
+
+                    $(this).bind("contextmenu", function(e) { // disable right click
+                	e.preventDefault();
+           	    });
                     setup_stage(get_stage())
                     $("#salir").bind('click', topscore)
                 }
@@ -403,18 +397,18 @@
                 <p id="infop">
                 </p>
             </div>
-            <img id= "img-fondo" src="./res/images/fondo.png">
+            <img id= "img-fondo" src="./res/images/fondo.png" onmousedown="if (event.preventDefault) event.preventDefault()">
             <div class="casa" id="img-drop-1">
-                <img class= "imgc" src="./res/images/casa_ana.png">
+                <img class= "imgc" src="./res/images/casa_ana.png" onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
             <div class="casa" id="img-drop-2">
-                <img class= "imgc" src="./res/images/casa_pancho.png">
+                <img class= "imgc" src="./res/images/casa_pancho.png" onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
             <div class="casa" id="img-drop-3">
-                <img class= "imgc" src="./res/images/casa_nubis.png">
+                <img class= "imgc" src="./res/images/casa_nubis.png" onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
             <div class="casa" id="img-drop-4">
-                <img class= "imgc" src="./res/images/casa_vacia.png">
+                <img class= "imgc" src="./res/images/casa_vacia.png" onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
             <div id="drop-1" class="drop">
             </div>
