@@ -20,11 +20,11 @@
    $(function(){ 
    
    	var trackImg = [],
-	CWIDTH=600,
-	CHEIGHT=450,
+	CWIDTH=720,
+	CHEIGHT=540,
 	xpos = new Array(),
 	ypos = new Array(),
-	tmax = 15,
+	tmax = 20,
 	logger = $.games.new_play(),
 	backsound,
 	scoreTable = new Highscore(resume),
@@ -45,7 +45,7 @@
 	pPaso = 0,
 	check = new Checkpoint([5, 10, 15, 20, 25],on_end,on_check),  
     temp = $("#temp").get(0).getContext('2d');
-	temp.translate(100,100);
+	temp.translate(110,110);
 	temp.save(); 
    	for (i=0;i<=4;i++){
 		trackImg[i]= new Image();
@@ -53,10 +53,6 @@
 	} //
 	var img = new Image();
 	img.src = './res/images/Pasto.png';
-	img.onload = function(){
-	   generate_track([0,1,2,3],[1,2,3,4])
-	   
-    }
 	if ($.games.is_school_player){setTimeout(function(){END_SCHOOL = 1},$.games.school_max_time*1000)}
 	if ($.games.is_authenticated){
 		state = $.games.state;
@@ -83,29 +79,36 @@
 	//Drawing functions	
 	
 	function generate_track(interior,exterior){
-		var new_data=0;
+		var LADO = 220,
+			PX = 200,
+			PY = 75,
+			new_data=0;
 		ctx.drawImage(img,0,0);
+		ctx.globalCompositeOperation = 'lighter';
+		
 		temp.restore();
 		// dibujo exterior
-		ctx.globalCompositeOperation = 'lighter';
+		
+
 		for (c = 0; c < 4; c++) {
-			temp.drawImage(trackImg[exterior[c]], -100, -100);
-			ctx.drawImage($("#temp").get(0), 175 + 200 * Math.floor(c / 2), 25 + Math.round((c % 3)/1.5) * 200);
+			temp.drawImage(trackImg[exterior[c]], -LADO/2, -LADO/2);
+			ctx.drawImage($("#temp").get(0), PX + LADO * Math.floor(c / 2),PY + Math.round((c % 3)/1.5) * LADO);
 			temp.rotate(-Math.PI *90/180);
 		}
-		temp.restore();
+		
+		temp.restore()
 		// dibujo interior
 		temp.transform(0,-1,-1,0,0,0);
 		for (c = 0; c < 4; c++) {
-			temp.drawImage(trackImg[interior[c]], -100, -100);
-			ctx.drawImage($("#temp").get(0), 175 + 200 * Math.floor(c / 2), 25 + Math.round((c % 3)/1.5) * 200);
+			temp.drawImage(trackImg[interior[c]], -LADO/2, -LADO/2);
+			ctx.drawImage($("#temp").get(0), PX + LADO * Math.floor(c / 2), PY + Math.round((c % 3)/1.5) * LADO);
 			temp.rotate(Math.PI *90/180);
 		}
-		x = ctx.getImageData(0,0,600,450);
+		x = ctx.getImageData(0,0,720,540);
 		pixels= x.data;
 		ctx.globalCompositeOperation = 'source-over';  
 		ctx.fillStyle = "#0abcdf"
-		ctx.fillRect(170,220,40,20);
+		ctx.fillRect(190,290,40,20);
 	}
 	
 	// Event handling functions
@@ -115,7 +118,7 @@
 			clearTimeout(c2);
 			$('#puntos').text('Corredores a la largada...')
 			$("#semaforo").hide();
-			check.displaytext('Epa te zarpaste, empeza de nuevo');
+			check.displaytext('Epa te moviste, empeza de nuevo');
 			soundManager.play('move');
 			comienzo();
 		}
@@ -146,22 +149,22 @@
 		en_pista.push((pixels[CWIDTH*(e.layerY+10)*4+(e.layerX+20)*4]==255)*1);
 		
 		//puntos de paso
-	    if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80&clockwiseFlag)
+	    if (e.layerX>370 &e.layerX<470 &e.layerY>73 &e.layerY<130&clockwiseFlag)
 			show_paso(1);
-	   	if (e.layerX>340 &e.layerX<410 &e.layerY>22 &e.layerY<80& (pPaso&2)>0)
+	   	if (e.layerX>370 &e.layerX<470 &e.layerY>73 &e.layerY<130& (pPaso&2)>0)
 			show_paso(1)
-	   	if (e.layerX>520 &e.layerX<590 &e.layerY>200 &e.layerY<260 & pPaso != 0)
+	   	if (e.layerX>580 &e.layerX<640 &e.layerY>280 &e.layerY<320 & pPaso != 0)
 			show_paso(2)
-		if (e.layerX>350 &e.layerX<410 &e.layerY>380 &e.layerY<440& !clockwiseFlag)
+		if (e.layerX>370 &e.layerX<470 &e.layerY>470 &e.layerY<530& !clockwiseFlag)
 			show_paso(4)
-		if (e.layerX>350 &e.layerX<410 &e.layerY>380 &e.layerY<440& (pPaso&2)>0)
+		if (e.layerX>370 &e.layerX<480 &e.layerY>470 &e.layerY<530& (pPaso&2)>0)
 			show_paso(4)
 		if (en_pista[en_pista.length-1]){
 			$("#game-container").css('cursor','url(./res/images/auto2.gif),auto');
 		}else{
 			$("#game-container").css('cursor','url(./res/images/autofuera2.gif),auto');
 		}
-		if (e.layerX>160 &e.layerX<185 &e.layerY>217 &e.layerY<230&pPaso ==7){
+		if (e.layerX>170 &e.layerX<210 &e.layerY>270 &e.layerY<310&pPaso ==7){
 			$("#bandera").slideDown(250);
 			pPaso = 0;
 			setTimeout(show_puntos,1000);
@@ -213,7 +216,7 @@
 		$("[id^=banderin]").hide();
 		var timeTot = Math.round(time[time.length-1]-time[0])/1000;
 		var penalizacion = 0;
-		for (i=0;i<xpos.length;i++){
+		for (i=1;i<xpos.length;i++){
 			if (!en_pista[i]){
 				penalizacion+= Math.round(Math.abs(xpos[i]-xpos[i-1]) + Math.abs(ypos[i]-ypos[i-1]))/20
 			}
@@ -316,7 +319,7 @@
 
 <body>
 <div id="game-container" height = "600" width="450"> 
-<canvas id="gameArea" width="600" height="450"></canvas>
+<canvas id="gameArea" width="720" height="540"></canvas>
 <img id="banderin0" src = "./res/images/banderin.png">
 <img id="banderin1" src = "./res/images/banderin.png">
 <img id="banderin2" src = "./res/images/banderin.png">
@@ -335,7 +338,7 @@
 </div>
 <div id="tmax">Tiempo max: 15.000 s</div>
 
-<canvas id="temp" width="200" height="200"></canvas>
+<canvas id="temp" width="220" height="220"></canvas>
 </body>
 
 </html>
