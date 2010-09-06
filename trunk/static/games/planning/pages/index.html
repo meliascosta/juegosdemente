@@ -226,6 +226,15 @@
                 }
 				
                 function next_stage(){
+			if (END_SCHOOL){
+						$.games.set_score(score,[current_gamefile, current_level]);
+						$.games.school_end_stage();
+						check.displaytext('Eso fue todo por hoy...')
+						setTimeout(function(){
+                        	window.location = $.games.main_site;
+                    	}, 3500);
+						return
+					}
                     if (current_trial == stages[current_level][current_trie].length) {
                         current_level++;
                         current_trial = 0;
@@ -263,15 +272,7 @@
                     check.step();
                     score = score + 1;
 					current_trial++;
-					if (END_SCHOOL){
-						$.games.set_score(score,[current_gamefile, current_level]);
-						$.games.school_end_stage();
-						check.displaytext('Eso fue todo por hoy...')
-						setTimeout(function(){
-                        	window.location = $.games.main_site;
-                    	}, 3500);
-						return
-					}
+
                     setTimeout(function(){
                         next_stage()
                     }, 3500);
