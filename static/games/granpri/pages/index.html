@@ -299,7 +299,9 @@
 		scoreTable.showTable(Math.round(score*100))
 	}
 	
-	
+	$(this).bind("contextmenu", function(e) { // disable right click
+                	e.preventDefault();
+           	    });
 	//startUp
 	$("#bandera").slideUp();
 	check.set_at(checknum%5);

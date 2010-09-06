@@ -265,6 +265,15 @@ $(function(){
 		
 		function on_bad(ficha){
 			logger.log("end_trial",{"good":0 ,"level": levelN ,"order": orderN,"tries":tries,"time": tempD.getTime()});
+			if (END_SCHOOL){
+						$.games.set_score(score,[gamefileN, levelN]);
+						$.games.school_end_stage();
+						check.displaytext('Eso fue todo por hoy...')
+						setTimeout(function(){
+                        	window.location = $.games.main_site;
+                    	}, 3500);
+						return
+					}
 			score = score - Math.floor(level.Levels[levelN].num_tarj/3);
 			tries++;
 			if (tries > level.Levels[levelN].num_tries){
@@ -347,6 +356,9 @@ $(function(){
 			},1200);
 		}
 		
+		$(this).bind("contextmenu", function(e) { // disable right click
+                	e.preventDefault();
+           	    });
 		new_game();
 		$("#salir").bind("click",topscore);
 		soundManager.debugMode = false;
