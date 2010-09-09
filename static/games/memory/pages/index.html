@@ -283,14 +283,14 @@ $(function(){
 			tempD = new Date();			
 			logger.log("click", {"mouseX": mouseX, "mouseY": mouseY, "t":t , "good": 0, "time": tempD.getTime(),  "ficha": ficha});
 			mouseX = []; mouseY=[];t=[];
-			if (tries==2){
+			if (tries==3){
 				tries =0;
 				orderN = 0;
 				score = score - 3*Math.floor(level.Levels[levelN].num_tarj/3);
-				check.displaytext("Oops! te caiste.");
+				check.displaytext("¡Oops! te caiste.");
 				check.fallback();
 			}else{
-			check.displaytext("Uh! Proba de nuevo...");
+			check.displaytext("¡Uh! Probá de nuevo...");
 			}
 			trial.newtrial(level.Levels[levelN].tries[tries][orderN].Positions,level.Levels[levelN].tries[tries][orderN].Card_types);
 		}
