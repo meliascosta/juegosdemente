@@ -240,7 +240,7 @@
 		}
         logger.log("raceEnd",{"xpos":xpos, "ypos":ypos,"time":time,"en_pista":en_pista,"score":score,"tmax":tmax,"timeTot":timeTot, "penalizacion":penalizacion.toFixed(3),"win":(timeTot+penalizacion<tmax)})
 		if (END_SCHOOL){
-			$.games.set_score(current_game.get_puntaje().puntos,[0,0]);
+			$.games.set_score(score,[0,0]);
 			$.games.school_end_stage();
 			check.displaytext('Eso fue todo por hoy...')
 			setTimeout(function(){
