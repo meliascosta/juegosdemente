@@ -170,7 +170,9 @@ function on_end(){
 		}
         
         var LEFT_KEY = 97,//a
+            LEFT_KEY_UP = 65,//A
             RIGHT_KEY = 108,//l
+            RIGHT_KEY_UP = 76,//L
             RESTART_KEY = 114,
             IMG_PATH = "../res/images/",
             $juez = $('div#juez'),
@@ -259,6 +261,8 @@ function on_end(){
         }
 
         function handle_response(e){
+            if (e.which == LEFT_KEY_UP){e.which = LEFT_KEY}
+            if (e.which == RIGHT_KEY_UP){e.which = RIGHT_KEY}
             if(e.which == RESTART_KEY){
                 //reset(); //Desactivado, hacia que se tilde a veces (queda el boton en el ranking)
                 return;
