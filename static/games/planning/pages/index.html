@@ -178,7 +178,7 @@
                 var current_level = 0;
 				//console.log($.games.state);
                 if ($.games.state != 0){current_gamefile = $.games.state[0]; current_level = $.games.state[1]} // If player has already played set it to the correct gamefile and level
-				$("body").css("background","url('./res/images/fondoS"+current_gamefile+".jpg') repeat");
+				$("body").css("background","url('./res/images/fondoS"+(current_gamefile>12?12:current_gamefile)+".jpg') repeat");
 				var level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
                 var current_trie = 0;
                 var current_trial = 0;
@@ -246,7 +246,7 @@
                                 if (current_gamefile< $.games.gamefile_list.length){
 								current_gamefile++;
 								}
-				$("body").css("background","url('./res/images/fondoS"+current_gamefile+".jpg') repeat");
+				$("body").css("background","url('./res/images/fondoS"+(current_gamefile>12?12:current_gamefile)+".jpg') repeat");
 				level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
                                 stages = level.Levels;
                                 $("#fondo").fadeOut();
