@@ -223,6 +223,7 @@
 											"to_check": (3 - current_trial),
 											"errors": current_trie
 					})
+					$('.drag').draggable("enable");
                 }
 				
                 function next_stage(){
@@ -342,6 +343,7 @@
                     }
                     if (won) {
                         //User won, set some time aside for repaints before telling him.
+                        $('.drag').draggable("disable");
                         setTimeout(win, 500)
                         return;
                     }
@@ -420,13 +422,13 @@
             <div id="drop-4" class="drop">
             </div>
             <div id="drag-1" class="drag">
-                <img class= "imgp" src="./res/images/ana.png">
+                <img class= "imgp" src="./res/images/ana.png"  onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
             <div id="drag-2" class="drag">
-                <img class= "imgp" src="./res/images/pancho.png">
+                <img class= "imgp" src="./res/images/pancho.png"  onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
             <div id="drag-3" class="drag">
-                <img class= "imgp" src="./res/images/nubis.png">
+                <img class= "imgp" src="./res/images/nubis.png"  onmousedown="if (event.preventDefault) event.preventDefault()">
             </div>
         </div>
         <div id="salir" class="boton">
