@@ -104,6 +104,7 @@
 			ctx.drawImage($("#temp").get(0), PX + LADO * Math.floor(c / 2), PY + Math.round((c % 3)/1.5) * LADO);
 			temp.rotate(Math.PI *90/180);
 		}
+		temp.transform(0,-1,-1,0,0,0);
 		x = ctx.getImageData(0,0,720,540);
 		pixels= x.data;
 		ctx.globalCompositeOperation = 'source-over';  
@@ -256,6 +257,7 @@
 		}
 
 	function nueva_pista(){
+		
 		soundManager.play('car_start');
 		setTimeout(function(){
 			$("#tmax").text('Tiempo max: '+ tmax.toFixed(3) + 's')
@@ -271,6 +273,7 @@
 			$("#flecha_"+clockwiseFlag*1).hide();
 			$("#flecha").show();
 			generate_track(interior,exterior);
+			console.log('interior:',interior, 'exterior:',exterior);
 			logger.log("newTrack",{"interior":interior, "exterior":exterior,"clockwise" : clockwiseFlag, 'tmax':tmax.toFixed(3),'to_check':to_check,'checknum':checknum,'level':level,'errores':errores})
 			comienzo();	
 		},1000);
