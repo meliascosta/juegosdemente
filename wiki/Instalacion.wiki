@@ -42,7 +42,7 @@ CREATE DATABASE labgamesdb;
 exit
 }}}
 
-===6) Agregar información a la base de datos===
+===6) Crear la estructura de la base de datos===
 {{{
 python manage.py syncdb --settings settings_main_site
 python manage.py syncdb --settings settings_games_site
