@@ -2,9 +2,9 @@
 Las instrucciones siguientes son para usuarios de Ubuntu (o Debian). Si tenés otra distribución de Linux, deberían ser similares. Si no tenés linux, empezá por arreglar ese error, ;)
 
 === 0) Requisitos ===
-  * svn: sudo apt-get install subversion
-  * Python: sudo apt-get install python
-  * MySql: sudo apt-get install mysql-server python-mysqldb
+  * svn: {{{sudo apt-get install subversion}}}
+  * Python: {{{sudo apt-get install python}}}
+  * MySQL: {{{sudo apt-get install mysql-server python-mysqldb}}}
 
 === 1) Instalar Django http://www.djangoproject.com/download/ ===
 {{{
