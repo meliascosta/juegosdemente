@@ -310,9 +310,12 @@
                 
                 function on_drop(ev, ui){
                     
-                    mouseX = [];
-                    mouseY = [];
-                    t = [];
+                    var mX = mouseX;
+                    var mY = mouseY;
+                    var T = t;
+					mouseX = [];
+					mouseY = [];
+					t = []
                     current_moves++;
                     soundManager.play('soltar_bien');
                     $(this).append($(ui.draggable)); //move the player
@@ -326,15 +329,13 @@
 							temp_stage[i-1] = x[1].id;
 						}
 					}
-
-					logger.log("drop", {
-                        "mouseX": mouseX,
-                        "mouseY": mouseY,
+                    logger.log("drop", {
+                        "mouseX": mX,
+                        "mouseY": mY,
 						"moves": current_moves,
-                        "t": t,
+                        "t": T,
 						"state":temp_stage,
 						})
-						
                     for (i in desired_stage) { // Check if the desired stage was reached
                         if ($('#' + desired_stage[i][1]).find('#' + desired_stage[i][0]).length == 0){
                             won = false;
