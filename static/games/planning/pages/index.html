@@ -5,7 +5,7 @@
         <style type="text/css">
             body {
                 background: url('./res/images/fondoS0.jpg') repeat;
-				overflow: hidden;
+                overflow: hidden;
                 font-family: Helvetica;
             }
             
@@ -16,15 +16,15 @@
             
             
             div.boton {
-				position: absolute;
-				top: 15%;
-				right:5%;
-				-moz-border-radius: 10px;
+                position: absolute;
+                top: 15%;
+                right:5%;
+                -moz-border-radius: 10px;
                 -webkit-border-radius: 10px;
                 text-align: center;
-				padding:10px;
+                padding:10px;
                 z-index: 5;
-				border:ridge;
+                border:ridge;
                 font-weight: bold;
                 background-color: #5A8EC6;
                 color: white;
@@ -112,8 +112,8 @@
                 left: 50%;
                 margin-left: -25%;
                 top: 18%;
-				-moz-user-select:none;
-				-khtml-user-select: none;
+                -moz-user-select:none;
+                -khtml-user-select: none;
             }
             
             #img-fondo {
@@ -133,16 +133,16 @@
                 font-size: 1% px;
                 background-color: #e1ede8;
             }
-			#infop{
-				padding:0px;
-				margin: 4px;
-			}
+            #infop{
+                padding:0px;
+                margin: 4px;
+            }
             ::-moz-selection{
-				background:transparent;
-			}
-			::selection {
-				background:transparent;
-			}
+                background:transparent;
+            }
+            ::selection {
+                background:transparent;
+            }
 
 
         </style>
@@ -176,13 +176,13 @@
                 var logger = $.games.new_play();
                 var current_gamefile = 0;
                 var current_level = 0;
-				//console.log($.games.state);
+                //console.log($.games.state);
                 if ($.games.state != 0){current_gamefile = $.games.state[0]; current_level = $.games.state[1]} // If player has already played set it to the correct gamefile and level
-				$("body").css("background","url('./res/images/fondoS"+(current_gamefile>12?12:current_gamefile)+".jpg') repeat");
-				var level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
+                $("body").css("background","url('./res/images/fondoS"+(current_gamefile>12?12:current_gamefile)+".jpg') repeat");
+                var level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
                 var current_trie = 0;
                 var current_trial = 0;
-				var END_SCHOOL = 0; // flag to terminate session
+                var END_SCHOOL = 0; // flag to terminate session
                 var stages = level.Levels;
                 var desired_stage = [['drag-1', 'drop-1'], ['drag-2', 'drop-2'], ['drag-3', 'drop-3']]
                 var current_moves; //Moves made in the current stage
@@ -193,10 +193,10 @@
                 logger.log("game_start", {
                     "level": level
                 });
-				if ($.games.is_school_player){setTimeout(function(){END_SCHOOL = 1},$.games.school_max_time*1000)}
-				
+                if ($.games.is_school_player){setTimeout(function(){END_SCHOOL = 1},$.games.school_max_time*1000)}
+                
                 $().mousemove(function(e){
-                    tempD = new Date();
+                    tempD = new Date()
                     mouseX.push(e.pageX);
                     mouseY.push(e.pageY);
                     t.push(tempD.getTime())
@@ -216,49 +216,51 @@
                     current_moves = 0
                     mov = get_stage().show_moves ? get_stage().good_moves : '?';
                     $("#info > p").text('Movidas mínimas: ' + mov);
-					logger.log("start_trial",{"stage":get_stage(),
-					    					"max_moves": get_stage().loose_moves,
-											"min_moves": get_stage().good_moves,
-											"show_moves": get_stage().show_moves,
-											"to_check": (3 - current_trial),
-											"errors": current_trie
-					})
-					$('.drag').draggable("enable");
+                    logger.log("start_trial",{"stage":get_stage(),
+                                            "max_moves": get_stage().loose_moves,
+                                            "min_moves": get_stage().good_moves,
+                                            "show_moves": get_stage().show_moves,
+                                            "to_check": (3 - current_trial),
+                                            "errors": current_trie
+                    })
+                    $('.drag').draggable("enable");
                 }
-				
+                
                 function next_stage(){
-			       if (current_trial == stages[current_level][current_trie].length) {
-                        current_level++;
-                        current_trial = 0;
-                        current_trie = 0;
-			       }
-			       if (END_SCHOOL){
-						$.games.set_score(score,[current_gamefile, current_level]);
-						$.games.school_end_stage();
-						check.displaytext('Eso fue todo por hoy...')
-						setTimeout(function(){
-                        	window.location = $.games.main_site;
-                    	}, 3500);
-						return
-			       }
-			       if (current_level == stages.length) {
-                            logger.log("fase_end", {});
-                                check.displaytext("Copado, vamos por más...");
-                                if (current_gamefile< $.games.gamefile_list.length){
-								current_gamefile++;
-								}
-				$("body").css("background","url('./res/images/fondoS"+(current_gamefile>12?12:current_gamefile)+".jpg') repeat");
-				level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
-                                stages = level.Levels;
-                                $("#fondo").fadeOut();
-                                setTimeout(function(){
-                                    $("#fondo").fadeIn();
-                                }, 3000)
-                                check.set_at(0);
-                                current_level = 0;
-                          
+                    if (current_trial == stages[current_level][current_trie].length) {
+                         current_level++;
+                         current_trial = 0;
+                         current_trie = 0;
+                    }
+                    if (END_SCHOOL){
+                        $.games.set_score(score,[current_gamefile, current_level]);
+                        $.games.school_end_stage();
+                        check.displaytext('Eso fue todo por hoy...')
+                        setTimeout(function(){
+                            window.location = $.games.main_site;
+                        }, 3500);
+                        return
+                    }
+                    if (current_level == stages.length) {
+                        logger.log("fase_end", {});
+                        check.displaytext("Copado, vamos por más...");
+                        if (current_gamefile< $.games.gamefile_list.length){
+                            current_gamefile++;
+                        }
+                        $("body").css("background","url('./res/images/fondoS"+(current_gamefile>12?12:current_gamefile)+".jpg') repeat");
+                        level = $.games.get_gamefile("gamefile_planning" + current_gamefile + ".txt");
+                        stages = level.Levels;
+                        $("#fondo").fadeOut();
+                        setTimeout(function(){
+                            $("#fondo").fadeIn();
+                        }, 3000)
+                        check.set_at(0);
+                        current_level = 0;
                     }
                     setup_stage(get_stage())
+                    mouseX = []; /* Deletes the mouse data from the timeout during the stage setup*/
+                    mouseY = [];
+                    t = [];
                 }
                 
                 function win(){
@@ -272,8 +274,8 @@
                     }
                     check.step();
                     score = score + 1;
-					current_trial++;
-
+                    current_trial++;
+                    
                     setTimeout(function(){
                         next_stage()
                     }, 3500);
@@ -313,33 +315,33 @@
                     var mX = mouseX;
                     var mY = mouseY;
                     var T = t;
-					mouseX = [];
-					mouseY = [];
-					t = []
+                    mouseX = [];
+                    mouseY = [];
+                    t = [];
                     current_moves++;
                     soundManager.play('soltar_bien');
                     $(this).append($(ui.draggable)); //move the player
                     var won = true;
                     var temp_stage = [];
-					for (i=1;i<=4;i++){
-						x = $("#drop-"+i).contents();
-						if (x[1]==undefined){
-							temp_stage[i-1] = 'empty';
-						}else{
-							temp_stage[i-1] = x[1].id;
-						}
-					}
+                    for (i=1;i<=4;i++){
+                        x = $("#drop-"+i).contents();
+                        if (x[1]==undefined){
+                            temp_stage[i-1] = 'empty';
+                        }else{
+                            temp_stage[i-1] = x[1].id;
+                        }
+                    }
                     logger.log("drop", {
                         "mouseX": mX,
                         "mouseY": mY,
-						"moves": current_moves,
+                        "moves": current_moves,
                         "t": T,
-						"state":temp_stage,
-						})
+                        "state":temp_stage,
+                        })
                     for (i in desired_stage) { // Check if the desired stage was reached
                         if ($('#' + desired_stage[i][1]).find('#' + desired_stage[i][0]).length == 0){
                             won = false;
-							break;
+                            break;
                         }
                     }
                     if (won) {
@@ -384,8 +386,8 @@
                     })
 
                     $(this).bind("contextmenu", function(e) { // disable right click
-                	e.preventDefault();
-           	    });
+                    e.preventDefault();
+                    });
                     setup_stage(get_stage())
                     $("#salir").bind('click', topscore)
                 }
