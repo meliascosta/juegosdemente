@@ -3,7 +3,7 @@ Las instrucciones siguientes son para usuarios de Ubuntu (o Debian). Si tenés o
 
 === 0) Requisitos ===
   * svn: {{{sudo apt-get install subversion}}}
-  * Python: {{{sudo apt-get install python}}}
+  * Python: {{{sudo apt-get install python python-imaging}}}
   * MySQL: {{{sudo apt-get install mysql-server python-mysqldb}}}
 
 === 1) Instalar Django http://www.djangoproject.com/download/ ===
